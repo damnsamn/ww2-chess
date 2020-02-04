@@ -11,9 +11,10 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+var appData = firebase.database().ref("ww2-chess");
 var gameData;
-var boardData = firebase.database().ref('temp/boardData');
-var activityData = firebase.database().ref('temp/activity');
+var boardData = appData.child("temp/boardData");
+var activityData = appData.child("temp/activity");
 var allGames = {};
 var loadedGame = null;
 
@@ -41,7 +42,7 @@ function getAllGames(dataObj = null) {
     }
 
     if (!dataObj)
-        firebase.database().ref().once('value', data => {
+    appData.once('value', data => {
             transformData(data);
         })
     else transformData(dataObj);
@@ -50,14 +51,14 @@ function getAllGames(dataObj = null) {
 }
 
 function newGame(gameName) {
-    firebase.database().ref().once('value',
+    appData.once('value',
         data => {
             function incrementGame(obj, i) {
                 if (Object.keys(obj).includes("game" + i)) {
                     incrementGame(obj, i + 1)
                 } else {
 
-                    gameData = firebase.database().ref("game" + i);
+                    gameData = appData.child("game" + i);
                     gameData.child("name").set(gameName);
                     allGames["game" + i] = {
                         name: gameName
@@ -89,9 +90,9 @@ function joinGame(gameKey) {
         if (key == gameKey) {
             gameExists = true;
 
-            gameData = firebase.database().ref(gameKey);
-            boardData = firebase.database().ref(`${gameKey}/boardData`);
-            activityData = firebase.database().ref(`${gameKey}/activity`);
+            gameData = appData.child(gameKey);
+            boardData = appData.child(`${gameKey}/boardData`);
+            activityData = appData.child(`${gameKey}/activity`);
 
             loadedGame = value;
             document.addEventListener("gameloaded", bindDatabaseListeners);
@@ -105,7 +106,7 @@ function joinGame(gameKey) {
 function endGame(gameKey = null) {
 
     if (gameKey)
-        firebase.database().ref(gameKey).remove();
+    appData.child(gameKey).remove();
     else {
         gameData.remove();
     }
