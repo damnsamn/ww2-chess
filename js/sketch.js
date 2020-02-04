@@ -182,7 +182,7 @@ function resetBoard() {
 function initialiseBoard() {
     board = new Board(true);
 
-    var whiteSide = new Side("White", "#EEEEEE");
+    var whiteSide = new Side("White", "#e6d9ca");
     whiteSide.definePieces([
         // new Rook(whiteSide, A, 1),
         // new King(whiteSide, E, 1),
@@ -205,7 +205,7 @@ function initialiseBoard() {
         new Rook(whiteSide, H, 1)
     ]);
 
-    var blackSide = new Side("Black", "#21252b");
+    var blackSide = new Side("Black", "#26201c");
     blackSide.definePieces([
         // new King(blackSide, E, 8),
         // new Queen(blackSide, H, 8),
