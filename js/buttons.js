@@ -63,13 +63,13 @@ var buttons = {
         setupGlyphStyle(squareSize);
         fill(colors.white);
         stroke(colors.black);
-        text(glyphs.king, self.width / 2, self.height / 2);
+        text(glyphs.general, self.width / 2, self.height / 2);
     }),
     selectBlack: new Button((x, y, self) => {
         setupGlyphStyle(squareSize);
         fill(colors.black);
         stroke(colors.white);
-        text(glyphs.king, self.width / 2, self.height / 2);
+        text(glyphs.general, self.width / 2, self.height / 2);
     }),
     endGame: new Button((x, y, self) => {
         textSize(mobile ? 12 : 16);

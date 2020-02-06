@@ -32,7 +32,7 @@ function preload() {
 function setup() {
     canvas = createCanvas(w, h);
     textFont(fontText);
-
+    strokeJoin(ROUND);
 
     initialiseBoard();
 

@@ -78,9 +78,9 @@ class Piece {
     }
 
     getGeneral() {
-        for (let king of getPiecesOfType(GENERAL))
-            if (king.side.name == this.side.name)
-                return king;
+        for (let general of getPiecesOfType(GENERAL))
+            if (general.side.name == this.side.name)
+                return general;
     }
 
     getCheckBreakingMoves() {
@@ -89,8 +89,6 @@ class Piece {
         this.moves = [];
         let currentCheck = board.check;
         for (let move of availableMoves) {
-            if (move.param == CASTLING)
-                continue;
             let mockMove = this.beginMove(move.x, move.y);
 
             this.getGeneral().checkLoop();
@@ -112,23 +110,19 @@ class Piece {
         let This = this;
 
         function loop(i) {
+            let mockMove = This.beginMove(This.moves[i]);
+            let currentCheck = board.check;
 
-            if (This.moves[i].param == CASTLING) {
+            This.getGeneral().checkLoop();
+
+            if (board.check)
+                This.moves.splice(i, 1);
+            else
                 i++;
-            } else {
-                let mockMove = This.beginMove(This.moves[i]);
-                let currentCheck = board.check;
 
-                This.getGeneral().checkLoop();
+            board.check = currentCheck;
+            This.revertMove(mockMove.original, mockMove.destination);
 
-                if (board.check)
-                    This.moves.splice(i, 1);
-                else
-                    i++;
-
-                board.check = currentCheck;
-                This.revertMove(mockMove.original, mockMove.destination);
-            }
 
             if (i != This.moves.length)
                 loop(i);
@@ -193,24 +187,18 @@ class Piece {
         // Check col,row correspond to an existing move in this.moves
         for (let move of moves) {
             if (col - 1 == move.x && row - 1 == move.y) {
+                let mockMove = this.beginMove(move.x, move.y);
 
-                if (move.param == CASTLING) {
-                    this.doCastling(board.state[move.x][move.y]);
+                if (this.type == INFANTRY)
+                    this.setEnPassant(move.x, move.y);
 
-                } else {
-                    let mockMove = this.beginMove(move.x, move.y);
-
-                    if (this.type == INFANTRY)
-                        this.setEnPassant(move.x, move.y);
-
-                    if (move.param instanceof Piece) {
-                        let piece = move.param;
-                        this.grave(piece.type);
-                        board.state[piece.position.index.x][piece.position.index.y] = Null;
-                    }
-
-                    this.commitMove(mockMove.original, mockMove.destination);
+                if (move.param instanceof Piece) {
+                    let piece = move.param;
+                    this.grave(piece.type);
+                    board.state[piece.position.index.x][piece.position.index.y] = Null;
                 }
+
+                this.commitMove(mockMove.original, mockMove.destination);
             }
         }
     }
@@ -286,59 +274,5 @@ class Piece {
             side.graveyard = [];
 
         side.graveyard.push(pieceType);
-    }
-
-    getCastling(target) {
-        let king = this.type == GENERAL ? this : target;
-        let rook = this.type == ARTILLERY ? this : target;
-
-        if (king.side.name == rook.side.name && !king.moved && !rook.moved && board.check != king) {
-            let diffX = rook.position.x - king.position.x;
-            let inc = diffX / abs(diffX);
-
-            let legal = true;
-            for (let x = king.position.index.x + inc; x != rook.position.index.x; x += inc) {
-                if (king.getCheckAt(x, king.position.index.y) || getPieceAtCoordinate(x + 1, king.position.index.y + 1))
-                    legal = false;
-            }
-
-            if (legal) {
-                return { x: target.position.index.x, y: target.position.index.y }
-            }
-            else return false;
-        }
-        else return false;
-    }
-
-    doCastling(target) {
-        let king = this.type == GENERAL ? this : target;
-        let rook = this.type == ARTILLERY ? this : target;
-        let diffX = rook.position.x - king.position.x;
-        let inc = diffX / abs(diffX);
-
-        let kingMove = king.beginMove(king.position.index.x + inc * (abs(diffX) - 1), king.position.index.y);
-        let rookMove = rook.beginMove(rook.position.index.x - inc * (abs(diffX) - 1), rook.position.index.y);
-
-        board.lastMove = [];
-        board.lastMove.push({ x: kingMove.original.x, y: kingMove.original.y })
-        board.lastMove.push({ x: rookMove.original.x, y: rookMove.original.y })
-        board.lastMove.push({ x: kingMove.destination.x, y: kingMove.destination.y })
-        board.lastMove.push({ x: rookMove.destination.x, y: rookMove.destination.y })
-
-        king.moved = false;
-        rook.moved = true;
-
-        // Deselect on move
-        player.selectedPiece = Null;
-
-        // Change turn
-        board.turn = this.side.enemy;
-
-        if (board.isFirstMove)
-            board.isFirstMove = false;
-
-        console.log("sending data:")
-        console.log(board)
-        boardData.set(board);
     }
 }

@@ -30,8 +30,6 @@ const SNIPER = "SNIPER";
 const TANK = "TANK";
 const GENERAL = "GENERAL";
 
-const CASTLING = "CASTLING";
-
 // Glyphs object
 const glyphs = {
     pawn: "\u{F443}",

@@ -113,7 +113,7 @@ class Board {
         let circleSize = 12;
         setupGlyphStyle(statusIconSize);
 
-        text(glyphs.king, -marginX / 1.5, -marginY / 1.5);
+        text(glyphs.general, -marginX / 1.5, -marginY / 1.5);
         strokeWeight(1.5);
         if (activity[board.sides[0].name]) {
             fill(colors.green);
@@ -126,7 +126,7 @@ class Board {
 
         fill(board.sides[1].color);
         stroke(board.sides[0].color);
-        text(glyphs.king, -marginX / 1.5, -marginY / 1.5 + statusIconSize * 1.5);
+        text(glyphs.general, -marginX / 1.5, -marginY / 1.5 + statusIconSize * 1.5);
         if (activity[board.sides[1].name]) {
             fill(colors.green);
             stroke(colors.green);
@@ -233,8 +233,8 @@ class Board {
             player.side = null;
 
         // set check
-        for (let king of getPiecesOfType(GENERAL)) {
-            king.checkLoop();
+        for (let general of getPiecesOfType(GENERAL)) {
+            general.checkLoop();
         }
 
         if (board.check)

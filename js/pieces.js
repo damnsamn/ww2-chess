@@ -82,14 +82,6 @@ class Artillery extends Piece {
                 for (let y = -1; y <= 1; y += 2)
                     this.moveLoop(x, y);
 
-
-
-        if (!this.moved) {
-            let castling = this.getCastling(this.getGeneral());
-            if (castling)
-                this.addMove(castling.x, castling.y, CASTLING);
-        }
-
     }
 }
 
@@ -157,17 +149,6 @@ class General extends Piece {
             for (let y = -1; y <= 1; y++)
                 this.moveLoop(x, y, 1);
 
-        if (!this.moved)
-            for (let x of [0, 7]) {
-                let piece = board.state[x][this.position.index.y];
-                if (piece && piece.type == ARTILLERY) {
-                    let castling = this.getCastling(piece);
-                    if (castling)
-                        this.addMove(castling.x, castling.y, CASTLING);
-                }
-            }
-
-
         this.checkLoop();
     }
 
@@ -185,9 +166,9 @@ class General extends Piece {
 
         // Perform checkLoop() for each General
         let check = Null;
-        for (let king of getPiecesOfType(GENERAL)) {
-            if (king.checkedBy && king.checkedBy.length)
-                check = king;
+        for (let general of getPiecesOfType(GENERAL)) {
+            if (general.checkedBy && general.checkedBy.length)
+                check = general;
         }
         board.check = check;
 
