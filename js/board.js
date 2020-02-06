@@ -36,7 +36,7 @@ class Board {
                 for (let move of board.lastMove)
                     if (move.x == x - 1 && move.y == y - 1) {
                         push();
-                        let c = color(colors.blue);
+                        let c = color(colors.green);
                         c.setAlpha(75);
                         fill(c);
                         rect(0, 0, squareSize, squareSize);
@@ -191,32 +191,32 @@ class Board {
                         for (let i = 0; i < array.length; i++) {
                             if (array[i])
                                 switch (array[i].type) {
-                                    case PAWN:
-                                        this[key][index].push(new Pawn(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].enPassant));
+                                    case INFANTRY:
+                                        this[key][index].push(new Infantry(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].enPassant));
                                         break;
 
-                                    case ROOK:
-                                        this[key][index].push(new Rook(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved));
+                                    case ARTILLERY:
+                                        this[key][index].push(new Artillery(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
                                         break;
 
-                                    case KNIGHT:
-                                        this[key][index].push(new Knight(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved));
+                                    case PARATROOPER:
+                                        this[key][index].push(new Paratrooper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
                                         break;
 
-                                    case BISHOP:
-                                        this[key][index].push(new Bishop(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved));
+                                    case SNIPER:
+                                        this[key][index].push(new Sniper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
                                         break;
 
-                                    case QUEEN:
-                                        this[key][index].push(new Queen(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved));
+                                    case TANK:
+                                        this[key][index].push(new Tank(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
                                         break;
 
-                                    case KING:
-                                        this[key][index].push(new King(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].potentialAttackers));
+                                    case GENERAL:
+                                        this[key][index].push(new General(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].potentialAttackers));
                                         break;
 
                                     default:
-                                        this[key][index].push(new Piece(array[i].type, array[i].side, array[i].position.x, array[i].moves, array[i].position.y, array[i].moved));
+                                        this[key][index].push(new Piece(array[i].type, array[i].side, array[i].position.x, array[i].moves, array[i].position.y, array[i].moved, array[i].hp));
                                         break;
                                 }
                             else
@@ -233,7 +233,7 @@ class Board {
             player.side = null;
 
         // set check
-        for (let king of getPiecesOfType(KING)) {
+        for (let king of getPiecesOfType(GENERAL)) {
             king.checkLoop();
         }
 
@@ -245,7 +245,7 @@ class Board {
             if (board.state[x - 1][y - 1] !== Null && board.turn.name == board.state[x - 1][y - 1].side.name) {
                 board.state[x - 1][y - 1].getMoves();
 
-                if (board.check == board.state[x - 1][y - 1].getKing())
+                if (board.check == board.state[x - 1][y - 1].getGeneral())
                     board.state[x - 1][y - 1].getCheckBreakingMoves();
 
                 if (!board.check)

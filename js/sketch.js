@@ -184,47 +184,47 @@ function initialiseBoard() {
 
     var whiteSide = new Side("White", "#e6d9ca");
     whiteSide.definePieces([
-        // new Rook(whiteSide, A, 1),
-        // new King(whiteSide, E, 1),
-        // new Rook(whiteSide, H, 1),
-        new Pawn(whiteSide, A, 2),
-        new Pawn(whiteSide, B, 2),
-        new Pawn(whiteSide, C, 2),
-        new Pawn(whiteSide, D, 2),
-        new Pawn(whiteSide, E, 2),
-        new Pawn(whiteSide, F, 2),
-        new Pawn(whiteSide, G, 2),
-        new Pawn(whiteSide, H, 2),
-        new Rook(whiteSide, A, 1),
-        new Knight(whiteSide, B, 1),
-        new Bishop(whiteSide, C, 1),
-        new Queen(whiteSide, D, 1),
-        new King(whiteSide, E, 1), // E1
-        new Bishop(whiteSide, F, 1),
-        new Knight(whiteSide, G, 1),
-        new Rook(whiteSide, H, 1)
+        // new Artillery(whiteSide, A, 1),
+        // new General(whiteSide, E, 1),
+        // new Artillery(whiteSide, H, 1),
+        new Infantry(whiteSide, A, 2),
+        new Infantry(whiteSide, B, 2),
+        new Infantry(whiteSide, C, 2),
+        new Infantry(whiteSide, D, 2),
+        new Infantry(whiteSide, E, 2),
+        new Infantry(whiteSide, F, 2),
+        new Infantry(whiteSide, G, 2),
+        new Infantry(whiteSide, H, 2),
+        new Artillery(whiteSide, A, 1),
+        new Paratrooper(whiteSide, B, 1),
+        new Sniper(whiteSide, C, 1),
+        new Tank(whiteSide, D, 1),
+        new General(whiteSide, E, 1), // E1
+        new Sniper(whiteSide, F, 1),
+        new Paratrooper(whiteSide, G, 1),
+        new Artillery(whiteSide, H, 1)
     ]);
 
     var blackSide = new Side("Black", "#26201c");
     blackSide.definePieces([
-        // new King(blackSide, E, 8),
-        // new Queen(blackSide, H, 8),
-        new Pawn(blackSide, A, 7),
-        new Pawn(blackSide, B, 7),
-        new Pawn(blackSide, C, 7),
-        new Pawn(blackSide, D, 7),
-        new Pawn(blackSide, E, 7),
-        new Pawn(blackSide, F, 7),
-        new Pawn(blackSide, G, 7),
-        new Pawn(blackSide, H, 7),
-        new Rook(blackSide, A, 8),
-        new Knight(blackSide, B, 8),
-        new Bishop(blackSide, C, 8),
-        new Queen(blackSide, D, 8), // D8
-        new King(blackSide, E, 8),
-        new Bishop(blackSide, F, 8),
-        new Knight(blackSide, G, 8),
-        new Rook(blackSide, H, 8)
+        // new General(blackSide, E, 8),
+        // new Tank(blackSide, H, 8),
+        new Infantry(blackSide, A, 7),
+        new Infantry(blackSide, B, 7),
+        new Infantry(blackSide, C, 7),
+        new Infantry(blackSide, D, 7),
+        new Infantry(blackSide, E, 7),
+        new Infantry(blackSide, F, 7),
+        new Infantry(blackSide, G, 7),
+        new Infantry(blackSide, H, 7),
+        new Artillery(blackSide, A, 8),
+        new Paratrooper(blackSide, B, 8),
+        new Sniper(blackSide, C, 8),
+        new Tank(blackSide, D, 8), // D8
+        new General(blackSide, E, 8),
+        new Sniper(blackSide, F, 8),
+        new Paratrooper(blackSide, G, 8),
+        new Artillery(blackSide, H, 8)
     ]);
     player.view = board.sides[0].name;
 }
@@ -274,17 +274,17 @@ function playerReturn() {
 function promote(piece, target) {
 
     switch (target) {
-        case QUEEN:
-            piece = new Queen(piece.side, piece.position.x, piece.position.y);
+        case TANK:
+            piece = new Tank(piece.side, piece.position.x, piece.position.y);
             break;
-        case ROOK:
-            piece = new Rook(piece.side, piece.position.x, piece.position.y);
+        case ARTILLERY:
+            piece = new Artillery(piece.side, piece.position.x, piece.position.y);
             break;
-        case BISHOP:
-            piece = new Bishop(piece.side, piece.position.x, piece.position.y);
+        case SNIPER:
+            piece = new Sniper(piece.side, piece.position.x, piece.position.y);
             break;
-        case KNIGHT:
-            piece = new Knight(piece.side, piece.position.x, piece.position.y);
+        case PARATROOPER:
+            piece = new Paratrooper(piece.side, piece.position.x, piece.position.y);
             break;
     }
 
@@ -312,18 +312,18 @@ function promote(piece, target) {
 
 function setGlyph(type) {
     switch (type) {
-        case PAWN:
-            return glyphs.pawn;
-        case ROOK:
-            return glyphs.rook;
-        case KNIGHT:
-            return glyphs.knight;
-        case BISHOP:
-            return glyphs.bishop;
-        case QUEEN:
-            return glyphs.queen;
-        case KING:
-            return glyphs.king;
+        case INFANTRY:
+            return glyphs.infantry;
+        case ARTILLERY:
+            return glyphs.artillery;
+        case PARATROOPER:
+            return glyphs.paratrooper;
+        case SNIPER:
+            return glyphs.sniper;
+        case TANK:
+            return glyphs.tank;
+        case GENERAL:
+            return glyphs.general;
     }
 }
 
@@ -334,39 +334,46 @@ function drawGameSelect() {
     let nameSize = !mobile ? 18 : 14;
     let itemHeight = !mobile ? 50 : 30;
     let itemMargin = !mobile ? 25 : 10;
-
-
     noStroke();
-    fill(colors.white);
-    textSize(headingSize);
-    textAlign(LEFT, TOP)
-    text("Join a game:", marginX, marginY / 2);
-    buttons.gameListRefresh.draw(width - marginX - headingSize, marginY / 2 + headingSize / 4, headingSize)
-    if (allGames.length) {
-        let i = 0;
-        for ([key, value] of Object.entries(allGames))
-            if (key.includes("game")) {
-                let game = allGames[key];
-                if (!game.button)
-                    game.button = new Button((x, y, self) => {
-                        rect(x, y, self.width, self.height, 3);
 
-                        fill(colors.black);
-                        textAlign(LEFT, CENTER)
-                        textSize(nameSize)
-                        text(game.name, 15, self.height / 2 - nameSize / 8);
-                    })
-                game.button.draw(marginX, marginY / 2 + itemHeight + ((i) * (itemHeight + itemMargin)), boardSize, itemHeight);
-                i++;
-            }
+
+    if (allGames) {
+        fill(colors.white);
+        textSize(headingSize);
+        textAlign(LEFT, TOP)
+        text("Join a game:", marginX, marginY / 2);
+        buttons.gameListRefresh.draw(width - marginX - headingSize, marginY / 2 + headingSize / 4, headingSize)
+        if (allGames.length) {
+            let i = 0;
+            for ([key, value] of Object.entries(allGames))
+                if (key.includes("game")) {
+                    let game = allGames[key];
+                    if (!game.button)
+                        game.button = new Button((x, y, self) => {
+                            rect(x, y, self.width, self.height, 3);
+
+                            fill(colors.black);
+                            textAlign(LEFT, CENTER)
+                            textSize(nameSize)
+                            text(game.name, 15, self.height / 2 - nameSize / 8);
+                        })
+                    game.button.draw(marginX, marginY / 2 + itemHeight + ((i) * (itemHeight + itemMargin)), boardSize, itemHeight);
+                    i++;
+                }
+        } else {
+            fill(darken(color(colors.white), 0.5));
+            textAlign(CENTER, CENTER);
+            textSize(nameSize);
+            text("There are currently no games in progress", width / 2, height / 2)
+        }
+        buttons.newGame.draw(width / 2 - 125 / 2, boardSize + marginY * 1.25, 125, 35);
     } else {
         fill(darken(color(colors.white), 0.5));
         textAlign(CENTER, CENTER);
         textSize(nameSize);
-        text("There are currently no games in progress", width / 2, height / 2)
-    }
-    buttons.newGame.draw(width / 2 - 125 / 2, boardSize + marginY * 1.25, 125, 35)
+        text("Loading...", width / 2, height / 2);
 
+    }
     pop();
 }
 

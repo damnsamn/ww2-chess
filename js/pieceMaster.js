@@ -1,5 +1,5 @@
 class Piece {
-    constructor(type, side, posX, posY, moves = [], moved = false) {
+    constructor(type, side, posX, posY, moves = [], moved = false, hp) {
         this.type = type;
         this.side = side;
         this.position = {
@@ -11,6 +11,7 @@ class Piece {
             }
         }
         this.glyph = setGlyph(this.type);
+        this.hp = hp;
         this.moves = moves;
         this.moved = moved;
     }
@@ -27,9 +28,21 @@ class Piece {
             rotate(PI);
         }
 
-        stroke(player.selectedPiece == this ? darken(colors.blue, 0.75) : strokeColor);
+        // Draw Icon
+        stroke(player.selectedPiece == this ? darken(colors.green, 0.75) : strokeColor);
         fill(fillColor);
         text(this.glyph, squareSize / 2, squareSize / 2 - iconSize / 8);
+
+        // Draw HP
+        strokeWeight(1);
+        let c = this.hp < 2 ? colors.red : colors.green;
+        stroke(lighten(color(c), 0.25));
+        fill(c);
+        if (this.hp > 0)
+            circle(squareSize - 5 - 3, squareSize - 5 - 3, 5);
+        if (this.hp > 1)
+            circle(squareSize - 15 - 3, squareSize - 5 - 3, 5);
+
         pop();
     }
 
@@ -39,7 +52,7 @@ class Piece {
             let moves = Object.values(this.moves)
             for (let move of moves) {
                 let piece = board.state[move.x][move.y];
-                let c = piece == Null ? color(colors.blue) : piece.side.name == this.side.name ? color(colors.green) : color(colors.red);
+                let c = piece == Null ? color(colors.green) : piece.side.name == this.side.name ? color(colors.blue) : color(colors.red);
                 push();
                 translate(move.x * squareSize, (8 - move.y - 1) * squareSize);
 
@@ -64,8 +77,8 @@ class Piece {
 
     }
 
-    getKing() {
-        for (let king of getPiecesOfType(KING))
+    getGeneral() {
+        for (let king of getPiecesOfType(GENERAL))
             if (king.side.name == this.side.name)
                 return king;
     }
@@ -80,7 +93,7 @@ class Piece {
                 continue;
             let mockMove = this.beginMove(move.x, move.y);
 
-            this.getKing().checkLoop();
+            this.getGeneral().checkLoop();
 
             if (board.check != currentCheck) {
                 this.moves.push(move);
@@ -106,7 +119,7 @@ class Piece {
                 let mockMove = This.beginMove(This.moves[i]);
                 let currentCheck = board.check;
 
-                This.getKing().checkLoop();
+                This.getGeneral().checkLoop();
 
                 if (board.check)
                     This.moves.splice(i, 1);
@@ -187,7 +200,7 @@ class Piece {
                 } else {
                     let mockMove = this.beginMove(move.x, move.y);
 
-                    if (this.type == PAWN)
+                    if (this.type == INFANTRY)
                         this.setEnPassant(move.x, move.y);
 
                     if (move.param instanceof Piece) {
@@ -213,7 +226,7 @@ class Piece {
         // show *which* piece last moved
         board.lastMove.push({ x: this.position.index.x, y: this.position.index.y });
 
-        if (this.type == PAWN)
+        if (this.type == INFANTRY)
             if ((this.side.name == board.sides[0].name && this.position.y == 8) || (this.side.name == board.sides[1].name && this.position.y == 1))
                 promotion = this;
 
@@ -276,8 +289,8 @@ class Piece {
     }
 
     getCastling(target) {
-        let king = this.type == KING ? this : target;
-        let rook = this.type == ROOK ? this : target;
+        let king = this.type == GENERAL ? this : target;
+        let rook = this.type == ARTILLERY ? this : target;
 
         if (king.side.name == rook.side.name && !king.moved && !rook.moved && board.check != king) {
             let diffX = rook.position.x - king.position.x;
@@ -298,8 +311,8 @@ class Piece {
     }
 
     doCastling(target) {
-        let king = this.type == KING ? this : target;
-        let rook = this.type == ROOK ? this : target;
+        let king = this.type == GENERAL ? this : target;
+        let rook = this.type == ARTILLERY ? this : target;
         let diffX = rook.position.x - king.position.x;
         let inc = diffX / abs(diffX);
 

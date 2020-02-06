@@ -23,12 +23,12 @@ const textFontPath = 'assets/RobotoMono-Bold.ttf';
 const iconSize = squareSize / 1.5;
 
 // Type strings
-const PAWN = "PAWN";
-const ROOK = "ROOK";
-const KNIGHT = "KNIGHT";
-const BISHOP = "BISHOP";
-const QUEEN = "QUEEN";
-const KING = "KING";
+const INFANTRY = "INFANTRY";
+const ARTILLERY = "ARTILLERY";
+const PARATROOPER = "PARATROOPER";
+const SNIPER = "SNIPER";
+const TANK = "TANK";
+const GENERAL = "GENERAL";
 
 const CASTLING = "CASTLING";
 
@@ -40,5 +40,11 @@ const glyphs = {
     bishop: "\u{F43A}",
     queen: "\u{F445}",
     king: "\u{F43F}",
+    infantry: "\u{F925}",
+    artillery: "\u{F1E2}",
+    paratrooper: "\u{F4CD}",
+    sniper: "\u{F05B}",
+    tank: "\u{F1B9}",
+    general: "\u{F508}",
     refresh: "\u{F2F1}"
 }

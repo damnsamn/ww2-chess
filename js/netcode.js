@@ -15,15 +15,15 @@ var appData = firebase.database().ref("ww2-chess");
 var gameData;
 var boardData = appData.child("temp/boardData");
 var activityData = appData.child("temp/activity");
-var allGames = {};
+var allGames;
 var loadedGame = null;
 
 var gameLoadedEvent = new Event("gameloaded");
 
 function getAllGames(dataObj = null) {
-    allGames = {};
     function transformData(d) {
         if (d.val()) {
+            allGames = {};
             let i = 0;
             for ([key1, value1] of Object.entries(d.val())) {
                 if (key1 != "temp")

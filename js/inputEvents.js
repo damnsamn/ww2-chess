@@ -79,10 +79,10 @@ function mousePressed() {
     // Promotion
     if (screenPromotion) {
         console.log("PROMOTION CLICK")
-        buttons.promote.queen.catchClick(() => { promote(promotion, QUEEN) })
-        buttons.promote.rook.catchClick(() => { promote(promotion, ROOK) })
-        buttons.promote.bishop.catchClick(() => { promote(promotion, BISHOP) })
-        buttons.promote.knight.catchClick(() => { promote(promotion, KNIGHT) })
+        buttons.promote.queen.catchClick(() => { promote(promotion, TANK) })
+        buttons.promote.rook.catchClick(() => { promote(promotion, ARTILLERY) })
+        buttons.promote.bishop.catchClick(() => { promote(promotion, SNIPER) })
+        buttons.promote.knight.catchClick(() => { promote(promotion, PARATROOPER) })
 
     }
 

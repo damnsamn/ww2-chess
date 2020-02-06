@@ -1,6 +1,6 @@
-class Pawn extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, enPassant = false) {
-        super(PAWN, side, gridX, gridY, moves, moved);
+class Infantry extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2, enPassant = false) {
+        super(INFANTRY, side, gridX, gridY, moves, moved, hp);
         this.enPassant = enPassant;
     }
 
@@ -38,7 +38,7 @@ class Pawn extends Piece {
         if (!target &&
             path &&
             path.side.name != this.side.name &&
-            path.type == PAWN &&
+            path.type == INFANTRY &&
             path.enPassant)
             this.addMove(this.position.index.x - 1, this.yStep, path)
 
@@ -48,7 +48,7 @@ class Pawn extends Piece {
         if (!target &&
             path &&
             path.side.name != this.side.name &&
-            path.type == PAWN &&
+            path.type == INFANTRY &&
             path.enPassant)
             this.addMove(this.position.index.x + 1, this.yStep, path)
     }
@@ -66,9 +66,9 @@ class Pawn extends Piece {
 
 }
 
-class Rook extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false) {
-        super(ROOK, side, gridX, gridY, moves, moved);
+class Artillery extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+        super(ARTILLERY, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
@@ -85,7 +85,7 @@ class Rook extends Piece {
 
 
         if (!this.moved) {
-            let castling = this.getCastling(this.getKing());
+            let castling = this.getCastling(this.getGeneral());
             if (castling)
                 this.addMove(castling.x, castling.y, CASTLING);
         }
@@ -93,9 +93,9 @@ class Rook extends Piece {
     }
 }
 
-class Knight extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false) {
-        super(KNIGHT, side, gridX, gridY, moves, moved);
+class Paratrooper extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+        super(PARATROOPER, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
@@ -116,9 +116,9 @@ class Knight extends Piece {
     }
 }
 
-class Bishop extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false) {
-        super(BISHOP, side, gridX, gridY, moves, moved);
+class Sniper extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+        super(SNIPER, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
@@ -130,9 +130,9 @@ class Bishop extends Piece {
     }
 }
 
-class Queen extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false) {
-        super(QUEEN, side, gridX, gridY, moves, moved);
+class Tank extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+        super(TANK, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
@@ -144,9 +144,9 @@ class Queen extends Piece {
     }
 }
 
-class King extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, potentialAttackers = []) {
-        super(KING, side, gridX, gridY, moves, moved);
+class General extends Piece {
+    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2, potentialAttackers = []) {
+        super(GENERAL, side, gridX, gridY, moves, moved, hp);
         this.potentialAttackers = potentialAttackers;
     }
 
@@ -160,7 +160,7 @@ class King extends Piece {
         if (!this.moved)
             for (let x of [0, 7]) {
                 let piece = board.state[x][this.position.index.y];
-                if (piece && piece.type == ROOK) {
+                if (piece && piece.type == ARTILLERY) {
                     let castling = this.getCastling(piece);
                     if (castling)
                         this.addMove(castling.x, castling.y, CASTLING);
@@ -183,9 +183,9 @@ class King extends Piece {
                     this.checkedBy.push(piece);
         }
 
-        // Perform checkLoop() for each King
+        // Perform checkLoop() for each General
         let check = Null;
-        for (let king of getPiecesOfType(KING)) {
+        for (let king of getPiecesOfType(GENERAL)) {
             if (king.checkedBy && king.checkedBy.length)
                 check = king;
         }
@@ -219,7 +219,7 @@ class King extends Piece {
             }
 
 
-        // Knight
+        // Paratrooper
         for (let x = -2; x <= 2; x++)
             if (x != 0)
                 if (x % 2 == 0) {
