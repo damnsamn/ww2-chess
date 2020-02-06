@@ -1,65 +1,32 @@
 class Infantry extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2, enPassant = false) {
+    constructor(side, gridX, gridY, moves = null, moved = false, hp = 2, ) {
         super(INFANTRY, side, gridX, gridY, moves, moved, hp);
-        this.enPassant = enPassant;
     }
 
     getMoves() {
-        this.yDir = board.sides[0].name == this.side.name ? 1 : -1;
+        this.initMoves();
         this.yStep = this.position.index.y + this.yDir;
+        let target;
 
+        // Movement
+        // Forward and back
+        for (let y = -1; y <= 1; y += 2) {
+            target = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + y);
+            if (!target)
+                this.addMove(MOVEMENT, this.position.index.x, this.position.index.y + y);
+        }
 
-        this.moves = [];
-        let target, path;
-        // Forward
-        target = board.checkPositionIsOccupied(this.position.index.x, this.yStep);
-        if (!target)
-            this.addMove(this.position.index.x, this.yStep);
+        // Ranged
+        target = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir * 2);
+        let path = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir)
+        if (target && !path && target.side.name != this.side.name)
+            this.addMove(RANGED, target.position.index.x, target.position.index.y)
 
-        // Two-step
-        target = board.checkPositionIsOccupied(this.position.index.x, this.yStep + this.yDir);
-        path = board.checkPositionIsOccupied(this.position.index.x, this.yStep);
-        if (!this.moved && !path && !target)
-            this.addMove(this.position.index.x, this.yStep + this.yDir);
-
-        // Capture Left
-        target = board.checkPositionIsOccupied(this.position.index.x - 1, this.yStep);
-        if (target && target.side.name != this.side.name)
-            this.addMove(this.position.index.x - 1, this.yStep);
-
-        // Capture Right
-        target = board.checkPositionIsOccupied(this.position.index.x + 1, this.yStep);
-        if (target && target.side.name != this.side.name)
-            this.addMove(this.position.index.x + 1, this.yStep);
-
-        // En Passant Left
-        target = board.checkPositionIsOccupied(this.position.index.x - 1, this.yStep);
-        path = board.checkPositionIsOccupied(this.position.index.x - 1, this.position.index.y);
-        if (!target &&
-            path &&
-            path.side.name != this.side.name &&
-            path.type == INFANTRY &&
-            path.enPassant)
-            this.addMove(this.position.index.x - 1, this.yStep, path)
-
-        // En Passant Right
-        target = board.checkPositionIsOccupied(this.position.index.x + 1, this.yStep);
-        path = board.checkPositionIsOccupied(this.position.index.x + 1, this.position.index.y);
-        if (!target &&
-            path &&
-            path.side.name != this.side.name &&
-            path.type == INFANTRY &&
-            path.enPassant)
-            this.addMove(this.position.index.x + 1, this.yStep, path)
-    }
-
-    setEnPassant(x, y) {
-        boardLoop((x, y) => {
-            if (board.state[x - 1][y - 1].enPassant)
-                board.state[x - 1][y - 1].enPassant = false;
-        })
-        if (x == this.position.index.x && y == this.yStep + this.yDir) {
-            this.enPassant = true;
+        // Melee
+        for (let x = -1; x <= 1; x++) {
+            target = board.checkPositionIsOccupied(this.position.index.x + x, this.position.index.y + this.yDir);
+            if (target && target.side.name != this.side.name)
+                this.addMove(MELEE, target.position.index.x, target.position.index.y);
         }
     }
 
@@ -67,89 +34,89 @@ class Infantry extends Piece {
 }
 
 class Artillery extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
         super(ARTILLERY, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
-        this.moves = [];
+        // this.moves = {};
 
 
-        for (let x = -1; x <= 1; x++)
-            if (x != 0)
-                this.moveLoop(x, 0);
-            else
-                for (let y = -1; y <= 1; y += 2)
-                    this.moveLoop(x, y);
+        // for (let x = -1; x <= 1; x++)
+        //     if (x != 0)
+        //         this.moveLoop(x, 0);
+        //     else
+        //         for (let y = -1; y <= 1; y += 2)
+        //             this.moveLoop(x, y);
 
     }
 }
 
 class Paratrooper extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
         super(PARATROOPER, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
-        this.moves = [];
+        // this.moves = {};
 
-        for (let x = -2; x <= 2; x++)
-            if (x != 0)
-                if (x % 2 == 0) {
-                    for (let y = -1; y <= 1; y++)
-                        if (y != 0)
-                            this.moveLoop(x, y, 1);
-                }
-                else
-                    for (let y = -2; y <= 2; y++)
-                        if (y % 2 == 0 && y != -0)
-                            this.moveLoop(x, y, 1);
+        // for (let x = -2; x <= 2; x++)
+        //     if (x != 0)
+        //         if (x % 2 == 0) {
+        //             for (let y = -1; y <= 1; y++)
+        //                 if (y != 0)
+        //                     this.moveLoop(x, y, 1);
+        //         }
+        //         else
+        //             for (let y = -2; y <= 2; y++)
+        //                 if (y % 2 == 0 && y != -0)
+        //                     this.moveLoop(x, y, 1);
 
     }
 }
 
 class Sniper extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
         super(SNIPER, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
-        this.moves = [];
+        // this.moves = {};
 
-        for (let x = -1; x <= 1; x += 2)
-            for (let y = -1; y <= 1; y += 2)
-                this.moveLoop(x, y);
+        // for (let x = -1; x <= 1; x += 2)
+        //     for (let y = -1; y <= 1; y += 2)
+        //         this.moveLoop(x, y);
     }
 }
 
 class Tank extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
         super(TANK, side, gridX, gridY, moves, moved, hp);
     }
 
     getMoves() {
-        this.moves = [];
+        // this.moves = {};
 
-        for (let x = -1; x <= 1; x++)
-            for (let y = -1; y <= 1; y++)
-                this.moveLoop(x, y);
+        // for (let x = -1; x <= 1; x++)
+        //     for (let y = -1; y <= 1; y++)
+        //         this.moveLoop(x, y);
     }
 }
 
 class General extends Piece {
-    constructor(side, gridX, gridY, moves = [], moved = false, hp = 2, potentialAttackers = []) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2, potentialAttackers = []) {
         super(GENERAL, side, gridX, gridY, moves, moved, hp);
         this.potentialAttackers = potentialAttackers;
     }
 
     getMoves() {
-        this.moves = [];
+        // this.moves = {};
 
-        for (let x = -1; x <= 1; x++)
-            for (let y = -1; y <= 1; y++)
-                this.moveLoop(x, y, 1);
+        // for (let x = -1; x <= 1; x++)
+        //     for (let y = -1; y <= 1; y++)
+        //         this.moveLoop(x, y, 1);
 
-        this.checkLoop();
+        // this.checkLoop();
     }
 
     checkLoop() {
@@ -175,7 +142,6 @@ class General extends Piece {
     }
 
     getCheckAt(x, y) {
-
         let mockMove = this.beginMove(x, y);
         let oldCheck = board.check;
         this.checkLoop();

@@ -175,10 +175,7 @@ class Board {
 
 
     checkPositionIsOccupied(x, y) {
-        if (board.state[x] && board.state[x][y])
-            return board.state[x][y];
-        else
-            return false;
+        return board.state[x][y];
     }
 
     updateData(data) {
@@ -192,7 +189,7 @@ class Board {
                             if (array[i])
                                 switch (array[i].type) {
                                     case INFANTRY:
-                                        this[key][index].push(new Infantry(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].enPassant));
+                                        this[key][index].push(new Infantry(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
                                         break;
 
                                     case ARTILLERY:

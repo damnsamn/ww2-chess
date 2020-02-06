@@ -18,7 +18,7 @@ function mousePressed() {
             if (player.side && board.turn.name == player.side.name) {
                 let selection = player.selectedPiece;
                 selectPieceAtMouse();
-                if (selection && selection.moves.length)
+                if (selection)
                     selection.moveTo(player.gridMouse.x, player.gridMouse.y);
             }
         }

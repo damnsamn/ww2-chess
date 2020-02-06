@@ -30,6 +30,11 @@ const SNIPER = "SNIPER";
 const TANK = "TANK";
 const GENERAL = "GENERAL";
 
+// Move types
+const MOVEMENT = "movement";
+const RANGED = "ranged";
+const MELEE = "melee";
+
 // Glyphs object
 const glyphs = {
     pawn: "\u{F443}",
@@ -44,5 +49,8 @@ const glyphs = {
     sniper: "\u{F05B}",
     tank: "\u{F1B9}",
     general: "\u{F508}",
+    footsteps: "\u{F54B}",
+    crosshair: "\u{F05B}",
+    swords: "\u{F71D}",
     refresh: "\u{F2F1}"
 }

@@ -1,5 +1,11 @@
 class Piece {
-    constructor(type, side, posX, posY, moves = [], moved = false, hp) {
+    moves = {
+        movement: [],
+        ranged: [],
+        melee: []
+    }
+
+    constructor(type, side, posX, posY, moves = null, moved = false, hp) {
         this.type = type;
         this.side = side;
         this.position = {
@@ -12,8 +18,14 @@ class Piece {
         }
         this.glyph = setGlyph(this.type);
         this.hp = hp;
-        this.moves = moves;
+
+        if (moves)
+            this.moves = moves;
+        else
+            this.initMoves();
+
         this.moved = moved;
+        this.yDir = this.side.name == "White" ? 1 : -1;
     }
 
     draw() {
@@ -29,7 +41,7 @@ class Piece {
         }
 
         // Draw Icon
-        stroke(player.selectedPiece == this ? darken(colors.green, 0.75) : strokeColor);
+        stroke(player.selectedPiece == this ? darken(colors.blue, 0.75) : strokeColor);
         fill(fillColor);
         text(this.glyph, squareSize / 2, squareSize / 2 - iconSize / 8);
 
@@ -49,32 +61,85 @@ class Piece {
     showAvailableMoves() {
 
         if (this.moves) {
-            let moves = Object.values(this.moves)
-            for (let move of moves) {
-                let piece = board.state[move.x][move.y];
-                let c = piece == Null ? color(colors.green) : piece.side.name == this.side.name ? color(colors.blue) : color(colors.red);
-                push();
-                translate(move.x * squareSize, (8 - move.y - 1) * squareSize);
 
-                noStroke();
-                c.setAlpha(150)
-                fill(c)
-                circle(squareSize / 2, squareSize / 2, 20);
-                pop();
+            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, false, true);
+            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8, true);
+            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8, true);
 
-                // console.log(`x: ${x}, y: ${y}, ${moves}`)
-
-            }
         }
     }
 
-    addMove(row, col, param = null) {
-        this.moves.push({ x: row, y: col, param: param });
+    addMove(type, row, col) {
+        this.moves[type].push({ x: row, y: col });
     }
+
+    loopMovesOfType(moveType, func) {
+        for (let move of this.moves[moveType]) {
+            func(move);
+        }
+    }
+
+    loopAllMoves(func) {
+        let moveTypes = Object.keys(this.moves);
+        for (let type of moveTypes)
+            this.loopMovesOfType(type, move => func(move, type));
+    }
+
+    drawLoopMovesOfType(moveType, glyphColor, glyph, size, hasStroke = false, isDirectional = false) {
+        this.loopMovesOfType(moveType, (move) => {
+
+            push();
+            translate(move.x * squareSize + squareSize / 2, (8 - move.y - 1) * squareSize + squareSize / 2);
+
+            if (isDirectional) {
+                // Rotate by direction
+                if (move.x < this.position.index.x) {
+                    if (move.y == this.position.index.y)
+                        rotate(PI)
+                    else if (move.y < this.position.index.y)
+                        rotate(PI - PI / 4)
+                    else
+                        rotate(PI + PI / 4)
+                } else if (move.x == this.position.index.x) {
+                    if (move.y > this.position.index.y)
+                        rotate(-PI / 2)
+                    else
+                        rotate(PI / 2)
+                } else if (move.x > this.position.index.x) {
+                    if (move.y < this.position.index.y)
+                        rotate(PI / 4)
+                    else if (move.y > this.position.index.y)
+                        rotate(-PI / 4)
+                }
+            }
+            else if (player.view == board.sides[1].name)
+                rotate(PI);
+
+            glyphColor.setAlpha(150);
+            fill(glyphColor);
+            setupGlyphStyle(size);
+            noStroke();
+            if (hasStroke) {
+                stroke(lighten(glyphColor, 0.25))
+                strokeWeight(2);
+            }
+            text(glyph, 0, 0);
+            pop();
+        })
+    }
+
 
 
     getMoves() {
 
+    }
+
+    initMoves() {
+        this.moves = {
+            movement: [],
+            ranged: [],
+            melee: []
+        }
     }
 
     getGeneral() {
@@ -86,7 +151,7 @@ class Piece {
     getCheckBreakingMoves() {
         let availableMoves = this.moves;
 
-        this.moves = [];
+        this.moves = {};
         let currentCheck = board.check;
         for (let move of availableMoves) {
             let mockMove = this.beginMove(move.x, move.y);
@@ -184,23 +249,30 @@ class Piece {
     moveTo(col, row) {
         let moves = Object.values(this.moves);
 
-        // Check col,row correspond to an existing move in this.moves
-        for (let move of moves) {
-            if (col - 1 == move.x && row - 1 == move.y) {
-                let mockMove = this.beginMove(move.x, move.y);
+        this.loopAllMoves((move, type) => {
+            switch (type) {
+                case MOVEMENT:
+                    if (col - 1 == move.x && row - 1 == move.y) {
+                        let mockMove = this.beginMove(move.x, move.y);
 
-                if (this.type == INFANTRY)
-                    this.setEnPassant(move.x, move.y);
-
-                if (move.param instanceof Piece) {
-                    let piece = move.param;
-                    this.grave(piece.type);
-                    board.state[piece.position.index.x][piece.position.index.y] = Null;
-                }
-
-                this.commitMove(mockMove.original, mockMove.destination);
+                        this.commitMove(mockMove.original, mockMove.destination);
+                    }
+                    break;
+                case RANGED:
+                    break;
+                case MELEE:
+                    break;
             }
-        }
+        });
+
+        // Check col,row correspond to an existing move in this.moves
+        // for (let move of moves) {
+        //     if (col - 1 == move.x && row - 1 == move.y) {
+        //         let mockMove = this.beginMove(move.x, move.y);
+
+        //         this.commitMove(mockMove.original, mockMove.destination);
+        //     }
+        // }
     }
 
     commitMove(original, destination) {
@@ -246,13 +318,16 @@ class Piece {
         // if n, only loop n times - else loop until we hit array bounds
         for (let i = 0; n != 0 ? i < n : i < board.state.length; i++)
             if (newX >= 0 && newX < board.state.length && newY >= 0 && newY < board.state.length) {
-                let newPos = board.state[newX][newY];
+                let dest = board.state[newX][newY];
 
-                if (newPos === Null && newPos !== undefined) {
+                // If tile is empty
+                if (dest === Null && dest !== undefined) {
                     loopFunction(newX, newY);
                     newX += incrementX;
                     newY += incrementY;
-                } else if (newPos && newPos.side.name != this.side.name) {
+
+                    // Else if tile contains enemy
+                } else if (dest && dest.side.name != this.side.name) {
                     loopFunction(newX, newY);
                     break;
                 }
