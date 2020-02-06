@@ -33,10 +33,10 @@ class Board {
             rect(0, 0, squareSize, squareSize);
 
             if (board.lastMove.length) {
-                for (let move of board.lastMove)
-                    if (move.x == x - 1 && move.y == y - 1) {
+                for (let tile of board.lastMove)
+                    if (tile.x == x - 1 && tile.y == y - 1) {
                         push();
-                        let c = color(colors.green);
+                        let c = color(tile.color);
                         c.setAlpha(75);
                         fill(c);
                         rect(0, 0, squareSize, squareSize);

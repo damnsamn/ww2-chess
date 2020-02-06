@@ -19,7 +19,7 @@ function mousePressed() {
                 let selection = player.selectedPiece;
                 selectPieceAtMouse();
                 if (selection)
-                    selection.moveTo(player.gridMouse.x, player.gridMouse.y);
+                    selection.tryMoveAt(player.gridMouse.x - 1, player.gridMouse.y - 1);
             }
         }
     }

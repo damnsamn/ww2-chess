@@ -4,7 +4,7 @@ class Infantry extends Piece {
     }
 
     getMoves() {
-        this.initMoves();
+        this.initMovesObj();
         this.yStep = this.position.index.y + this.yDir;
         let target;
 
@@ -142,7 +142,7 @@ class General extends Piece {
     }
 
     getCheckAt(x, y) {
-        let mockMove = this.beginMove(x, y);
+        let mockMove = this.beginMovement(x, y);
         let oldCheck = board.check;
         this.checkLoop();
         let newCheck = board.check;

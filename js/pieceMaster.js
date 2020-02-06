@@ -22,7 +22,7 @@ class Piece {
         if (moves)
             this.moves = moves;
         else
-            this.initMoves();
+            this.initMovesObj();
 
         this.moved = moved;
         this.yDir = this.side.name == "White" ? 1 : -1;
@@ -58,19 +58,20 @@ class Piece {
         pop();
     }
 
-    showAvailableMoves() {
-
-        if (this.moves) {
-
-            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, false, true);
-            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8, true);
-            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8, true);
-
+    initMovesObj() {
+        this.moves = {
+            movement: [],
+            ranged: [],
+            melee: []
         }
     }
 
     addMove(type, row, col) {
         this.moves[type].push({ x: row, y: col });
+    }
+
+    getMoves() {
+
     }
 
     loopMovesOfType(moveType, func) {
@@ -128,18 +129,65 @@ class Piece {
         })
     }
 
+    showAvailableMoves() {
 
+        if (this.moves) {
 
-    getMoves() {
+            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, false, true);
+            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8, true);
+            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8, true);
+
+        }
+    }
+
+    tryMoveAt(x, y) {
+        let possibleMoves = [];
+
+        this.loopAllMoves((move, type) => {
+            if (x == move.x && y == move.y) {
+                possibleMoves.push({ type: type, x: x, y: y });
+            }
+        });
+
+        if (possibleMoves.length) {
+            if (possibleMoves.length == 1) {
+                let move = possibleMoves[0];
+                this.doMove(move);
+            }
+        }
 
     }
 
-    initMoves() {
-        this.moves = {
-            movement: [],
-            ranged: [],
-            melee: []
+    doMove(move) {
+        switch (move.type) {
+            //
+            default:
+                let mockMove = this.beginMovement(move.x, move.y);
+                this.commitMovement(mockMove.original, mockMove.destination);
+                break;
+            case RANGED:
+                if (this.type != ARTILLERY) {
+                    console.log(`RANGED attack position [${colChar(move.x + 1)}, ${colChar(move.y + 1)}]`);
+                    board.state[move.x][move.y].damage(1);
+
+                    board.lastMove = [{ x: this.position.index.x, y: this.position.index.y, color: colors.blue }];
+                    board.lastMove.push({ x: move.x, y: move.y, color: colors.red });
+                }
+                this.endMove();
+
+                break;
         }
+    }
+
+
+    damage(n) {
+        this.hp -= n;
+
+        if (this.hp < 1) {
+            Piece.grave(this);
+            board.state[this.position.index.x][this.position.index.y] = Null;
+        }
+
     }
 
     getGeneral() {
@@ -154,7 +202,7 @@ class Piece {
         this.moves = {};
         let currentCheck = board.check;
         for (let move of availableMoves) {
-            let mockMove = this.beginMove(move.x, move.y);
+            let mockMove = this.beginMovement(move.x, move.y);
 
             this.getGeneral().checkLoop();
 
@@ -175,7 +223,7 @@ class Piece {
         let This = this;
 
         function loop(i) {
-            let mockMove = This.beginMove(This.moves[i]);
+            let mockMove = This.beginMovement(This.moves[i]);
             let currentCheck = board.check;
 
             This.getGeneral().checkLoop();
@@ -197,7 +245,7 @@ class Piece {
             loop(i);
     }
 
-    beginMove(move, y = null) {
+    beginMovement(move, y = null) {
         if (typeof move == "object") {
             var x = move.x;
             y = move.y;
@@ -253,9 +301,9 @@ class Piece {
             switch (type) {
                 case MOVEMENT:
                     if (col - 1 == move.x && row - 1 == move.y) {
-                        let mockMove = this.beginMove(move.x, move.y);
+                        let mockMove = this.beginMovement(move.x, move.y);
 
-                        this.commitMove(mockMove.original, mockMove.destination);
+                        this.commitMovement(mockMove.original, mockMove.destination);
                     }
                     break;
                 case RANGED:
@@ -268,46 +316,50 @@ class Piece {
         // Check col,row correspond to an existing move in this.moves
         // for (let move of moves) {
         //     if (col - 1 == move.x && row - 1 == move.y) {
-        //         let mockMove = this.beginMove(move.x, move.y);
+        //         let mockMove = this.beginMovement(move.x, move.y);
 
-        //         this.commitMove(mockMove.original, mockMove.destination);
+        //         this.commitMovement(mockMove.original, mockMove.destination);
         //     }
         // }
     }
 
-    commitMove(original, destination) {
-        // board.state[this.position.index.x][this.position.index.y] = this;
+    commitMovement(original, destination) {
+        // TODO: Back to commitMove - shouldn't be able to shoot&kill enemy into own checkmate
 
         // Add lastMove ghost
-        board.lastMove = [{ x: original.x, y: original.y }];
-
-        this.moved = true;
+        board.lastMove = [{ x: original.x, y: original.y, color: colors.blue }];
 
         // show *which* piece last moved
-        board.lastMove.push({ x: this.position.index.x, y: this.position.index.y });
+        board.lastMove.push({ x: this.position.index.x, y: this.position.index.y, color: destination.piece ? colors.red : colors.blue });
+
+        this.moved = true;
 
         if (this.type == INFANTRY)
             if ((this.side.name == board.sides[0].name && this.position.y == 8) || (this.side.name == board.sides[1].name && this.position.y == 1))
                 promotion = this;
 
+        if (destination.piece != Null)
+            Piece.grave(destination.piece);
+
 
         if (!promotion) {
-            // Deselect on move
-            player.selectedPiece = Null;
-
-            if (board.isFirstMove)
-                board.isFirstMove = false;
-
-            if (destination.piece != Null)
-                this.grave(destination.piece.type);
-
-            // Change turn
-            board.turn = this.side.enemy;
-
-            console.log("sending data:")
-            console.log(board)
-            boardData.set(board);
+            this.endMove();
         }
+    }
+
+    endMove() {
+        // Deselect on move
+        player.selectedPiece = Null;
+
+        if (board.isFirstMove)
+            board.isFirstMove = false;
+
+        // Change turn
+        board.turn = this.side.enemy;
+
+        console.log("sending data:")
+        console.log(board)
+        boardData.set(board);
 
     }
 
@@ -343,11 +395,11 @@ class Piece {
             }, n);
     }
 
-    grave(pieceType) {
-        let side = board.sides[0].name == this.side.name ? board.sides[0] : board.sides[1];
+    static grave(piece) {
+        let side = board.sides[0].name != piece.side.name ? board.sides[0] : board.sides[1];
         if (!side.graveyard)
             side.graveyard = [];
 
-        side.graveyard.push(pieceType);
+        side.graveyard.push(piece.type);
     }
 }
