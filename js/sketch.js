@@ -3,8 +3,9 @@ var bg = null;
 var player = {
     side: null,
     gridMouse: {},
+    hoverHighlight: [],
     selectedPiece: null,
-    view: null
+    view: null,
 }
 var loaded;
 var incomingData;
@@ -95,7 +96,6 @@ function changeView() {
         player.view = board.sides[0].name
 }
 
-// TODO: Add Board argument
 function boardLoop(fn) {
     let w = board.state.length;
     let h = board.state[0].length;
@@ -104,6 +104,16 @@ function boardLoop(fn) {
             fn(x, y);
         }
     }
+}
+
+function pieceLoop(fn) {
+    board.state.forEach(arr => {
+        arr.forEach(tile => {
+            if (tile) {
+                fn(tile);
+            }
+        })
+    })
 }
 
 function mouseGrid() {
@@ -115,6 +125,20 @@ function mouseGrid() {
         player.gridMouse.x = ceil((boardSize - (mouseX - marginX)) / squareSize);
         player.gridMouse.y = 8 - ceil((boardSize - (mouseY - marginY)) / squareSize) + 1;
     }
+
+    if (player.selectedPiece && player.selectedPiece.type == ARTILLERY) {
+        player.hoverHighlight = [];
+        for (let move of player.selectedPiece.moves.ranged) {
+            if (move.x == player.gridMouse.x - 1 && move.y == player.gridMouse.y - 1) {
+                for (let x = -1; x <= 1; x++) {
+                    player.hoverHighlight.push({ x: move.x + x, y: move.y, color: colors.red })
+                }
+                for (let y = -1; y <= 1; y += 2) {
+                    player.hoverHighlight.push({ x: move.x, y: move.y + y, color: colors.red })
+                }
+            }
+        }
+    }
 }
 
 function selectPieceAtMouse() {
@@ -125,7 +149,7 @@ function selectPieceAtMouse() {
             player.selectedPiece = selection;
 
         // Limit selection to players' own side
-        else if (selection.side.name == player.side.name) {
+        else if (selection.side.name == player.side.name && !selection.cooldown) {
             // Deselect, if clicking selected piece
             if (selection == player.selectedPiece)
                 selection = player.selectedPiece = null;
@@ -185,11 +209,8 @@ function initialiseBoard() {
 
     var whiteSide = new Side("White", "#e6d9ca");
     whiteSide.definePieces([
-        new Infantry(whiteSide, B, 4),
-        new Infantry(whiteSide, C, 4),
-        new Infantry(whiteSide, D, 4),
-        new Infantry(whiteSide, E, 4),
-        new Infantry(whiteSide, F, 4),
+        new Artillery(whiteSide, D, 2),
+        new Artillery(whiteSide, F, 2),
         // new Infantry(whiteSide, A, 2),
         // new Infantry(whiteSide, B, 2),
         // new Infantry(whiteSide, C, 2),
@@ -210,8 +231,14 @@ function initialiseBoard() {
 
     var blackSide = new Side("Black", "#26201c");
     blackSide.definePieces([
+        new Infantry(blackSide, C, 6),
         new Infantry(blackSide, D, 6),
-        new Infantry(blackSide, E, 5),
+        new Infantry(blackSide, E, 6),
+        new Infantry(blackSide, F, 6),
+        new Infantry(blackSide, C, 7),
+        new Infantry(blackSide, D, 7),
+        new Infantry(blackSide, E, 7),
+        new Infantry(blackSide, F, 7),
         // new Infantry(blackSide, A, 7),
         // new Infantry(blackSide, B, 7),
         // new Infantry(blackSide, C, 7),

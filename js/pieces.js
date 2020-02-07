@@ -6,7 +6,7 @@ class Infantry extends Piece {
     getMoves() {
         this.initMovesObj();
         this.yStep = this.position.index.y + this.yDir;
-        let target;
+        let target, path;
 
         // Movement
         // Forward and back
@@ -16,9 +16,20 @@ class Infantry extends Piece {
                 this.addMove(MOVEMENT, this.position.index.x, this.position.index.y + y);
         }
 
+        // Move 2
+        if (!this.moved) {
+            target = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir * 2);
+            path = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir);
+
+            if (!path && !target) {
+                this.addMove(MOVEMENT, this.position.index.x, this.position.index.y + this.yDir * 2);
+            }
+
+        }
+
         // Ranged
         target = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir * 2);
-        let path = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir)
+        path = board.checkPositionIsOccupied(this.position.index.x, this.position.index.y + this.yDir);
         if (target && !path && target.side.name != this.side.name)
             this.addMove(RANGED, target.position.index.x, target.position.index.y)
 
@@ -34,13 +45,26 @@ class Infantry extends Piece {
 }
 
 class Artillery extends Piece {
-    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
-        super(ARTILLERY, side, gridX, gridY, moves, moved, hp);
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2, cooldown = 0) {
+        super(ARTILLERY, side, gridX, gridY, moves, moved, hp, cooldown);
+
+        this.cooldownMax = 3;
     }
 
     getMoves() {
-        // this.moves = {};
+        this.initMovesObj();
 
+        // Movement
+
+        // Rannged
+        for (let x = -1; x <= 1; x++)
+            for (let y = -1; y <= 1; y++) {
+                // Ranged
+                this.moveLoop(MOVEMENT, x, y, 0, 1);
+
+                // Movement
+                this.moveLoop(RANGED, x, y, 2, 0);
+            }
 
         // for (let x = -1; x <= 1; x++)
         //     if (x != 0)

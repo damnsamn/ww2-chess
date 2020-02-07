@@ -5,7 +5,7 @@ class Piece {
         melee: []
     }
 
-    constructor(type, side, posX, posY, moves = null, moved = false, hp) {
+    constructor(type, side, posX, posY, moves = null, moved = false, hp = 2, cooldown = 0) {
         this.type = type;
         this.side = side;
         this.position = {
@@ -18,6 +18,7 @@ class Piece {
         }
         this.glyph = setGlyph(this.type);
         this.hp = hp;
+        this.cooldown = cooldown;
 
         if (moves)
             this.moves = moves;
@@ -44,6 +45,15 @@ class Piece {
         stroke(player.selectedPiece == this ? darken(colors.blue, 0.75) : strokeColor);
         fill(fillColor);
         text(this.glyph, squareSize / 2, squareSize / 2 - iconSize / 8);
+
+        if (this.cooldown) {
+            noStroke();
+            let c = color(this.side.enemy.color);
+            c.setAlpha(200);
+            fill(c);
+            arc(squareSize / 2, squareSize / 2, squareSize, squareSize, 0, (TWO_PI / this.cooldownMax) * this.cooldown);
+        }
+
 
         // Draw HP
         strokeWeight(1);
@@ -86,7 +96,7 @@ class Piece {
             this.loopMovesOfType(type, move => func(move, type));
     }
 
-    drawLoopMovesOfType(moveType, glyphColor, glyph, size, hasStroke = false, isDirectional = false) {
+    drawLoopMovesOfType(moveType, glyphColor, glyph, size, isDirectional = false) {
         this.loopMovesOfType(moveType, (move) => {
 
             push();
@@ -116,11 +126,11 @@ class Piece {
             else if (player.view == board.sides[1].name)
                 rotate(PI);
 
-            glyphColor.setAlpha(150);
+            glyphColor.setAlpha(175);
             fill(glyphColor);
             setupGlyphStyle(size);
             noStroke();
-            if (hasStroke) {
+            if (board.state[move.x][move.y]) {
                 stroke(lighten(glyphColor, 0.25))
                 strokeWeight(2);
             }
@@ -133,9 +143,9 @@ class Piece {
 
         if (this.moves) {
 
-            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, false, true);
-            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8, true);
-            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8, true);
+            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, true);
+            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8);
+            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8);
 
         }
     }
@@ -166,13 +176,28 @@ class Piece {
                 this.commitMovement(mockMove.original, mockMove.destination);
                 break;
             case RANGED:
+                console.log(`RANGED attack position [${colChar(move.x + 1)}, ${colChar(move.y + 1)}]`);
                 if (this.type != ARTILLERY) {
-                    console.log(`RANGED attack position [${colChar(move.x + 1)}, ${colChar(move.y + 1)}]`);
                     board.state[move.x][move.y].damage(1);
 
                     board.lastMove = [{ x: this.position.index.x, y: this.position.index.y, color: colors.blue }];
                     board.lastMove.push({ x: move.x, y: move.y, color: colors.red });
+                } else {
+                    board.lastMove = [{ x: this.position.index.x, y: this.position.index.y, color: colors.blue }];
+
+                    for (let x = -1; x <= 1; x++) {
+                        if (board.state[move.x + x][move.y])
+                            board.state[move.x + x][move.y].damage(1);
+                        board.lastMove.push({ x: move.x + x, y: move.y, color: colors.red });
+
+                    }
+                    for (let y = -1; y <= 1; y += 2) {
+                        if (board.state[move.x][move.y + y])
+                            board.state[move.x][move.y + y].damage(1);
+                        board.lastMove.push({ x: move.x, y: move.y + y, color: colors.red });
+                    }
                 }
+                this.startCooldown();
                 this.endMove();
 
                 break;
@@ -188,6 +213,11 @@ class Piece {
             board.state[this.position.index.x][this.position.index.y] = Null;
         }
 
+    }
+
+    startCooldown() {
+        if (this.cooldownMax)
+            this.cooldown = this.cooldownMax;
     }
 
     getGeneral() {
@@ -357,6 +387,12 @@ class Piece {
         // Change turn
         board.turn = this.side.enemy;
 
+        // Reduce all cooldowns for this side
+        pieceLoop(piece => {
+            if (piece != this && piece.cooldown)
+                piece.cooldown--;
+        });
+
         console.log("sending data:")
         console.log(board)
         boardData.set(board);
@@ -386,12 +422,15 @@ class Piece {
             }
     }
 
-    moveLoop(incrementX, incrementY, n) {
+    moveLoop(type, incrementX, incrementY, start = 0, n = 0) {
+        let s = 0;
         this.loopIncrement(
             incrementX,
             incrementY,
             (x, y) => {
-                this.addMove(x, y);
+                if (s >= start)
+                    this.addMove(type, x, y);
+                else s++;
             }, n);
     }
 

@@ -32,7 +32,7 @@ class Board {
 
             rect(0, 0, squareSize, squareSize);
 
-            if (board.lastMove.length) {
+            if (board.lastMove.length)
                 for (let tile of board.lastMove)
                     if (tile.x == x - 1 && tile.y == y - 1) {
                         push();
@@ -42,7 +42,18 @@ class Board {
                         rect(0, 0, squareSize, squareSize);
                         pop();
                     }
-            }
+
+
+            if (player.hoverHighlight.length)
+                for (let tile of player.hoverHighlight)
+                    if (tile.x == x - 1 && tile.y == y - 1) {
+                        push();
+                        let c = color(tile.color);
+                        c.setAlpha(75);
+                        fill(c);
+                        rect(0, 0, squareSize, squareSize);
+                        pop();
+                    }
 
 
             if (board.check) {
@@ -189,31 +200,31 @@ class Board {
                             if (array[i])
                                 switch (array[i].type) {
                                     case INFANTRY:
-                                        this[key][index].push(new Infantry(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Infantry(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
 
                                     case ARTILLERY:
-                                        this[key][index].push(new Artillery(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Artillery(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
 
                                     case PARATROOPER:
-                                        this[key][index].push(new Paratrooper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Paratrooper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
 
                                     case SNIPER:
-                                        this[key][index].push(new Sniper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Sniper(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
 
                                     case TANK:
-                                        this[key][index].push(new Tank(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Tank(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
 
                                     case GENERAL:
-                                        this[key][index].push(new General(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].potentialAttackers));
+                                        this[key][index].push(new General(array[i].side, array[i].position.x, array[i].position.y, array[i].moves, array[i].moved, array[i].hp, array[i].cooldown, array[i].potentialAttackers));
                                         break;
 
                                     default:
-                                        this[key][index].push(new Piece(array[i].type, array[i].side, array[i].position.x, array[i].moves, array[i].position.y, array[i].moved, array[i].hp));
+                                        this[key][index].push(new Piece(array[i].type, array[i].side, array[i].position.x, array[i].moves, array[i].position.y, array[i].moved, array[i].hp, array[i].cooldown));
                                         break;
                                 }
                             else
