@@ -54,6 +54,11 @@ var buttons = {
         textAlign(CENTER, CENTER);
         text("CONFIRM", self.width / 2, self.height / 2 - labelSize / 4);
     }),
+    newGameCancel: new Button((x, y, self) => {
+        setupGlyphStyle(self.width);
+        fill(colors.white);
+        text(glyphs.cross, self.width / 2, self.height / 2);
+    }),
     gameListRefresh: new Button((x, y, self) => {
         setupGlyphStyle(self.width);
         fill(colors.white);
@@ -88,29 +93,29 @@ var buttons = {
         text("RESET BOARD", self.width / 2, self.height / 2 - 16 / 4);
     }),
     promote: {
-        queen: new Button((x, y, self) => {
+        tank: new Button((x, y, self) => {
             setupGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.queen, self.width / 2, self.height / 2);
+            text(glyphs.tank, self.width / 2, self.height / 2);
         }),
-        rook: new Button((x, y, self) => {
+        artillery: new Button((x, y, self) => {
             setupGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.rook, self.width / 2, self.height / 2);
+            text(glyphs.artillery, self.width / 2, self.height / 2);
         }),
-        bishop: new Button((x, y, self) => {
+        sniper: new Button((x, y, self) => {
             setupGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.bishop, self.width / 2, self.height / 2);
+            text(glyphs.sniper, self.width / 2, self.height / 2);
         }),
-        knight: new Button((x, y, self) => {
+        paratrooper: new Button((x, y, self) => {
             setupGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.knight, self.width / 2, self.height / 2);
+            text(glyphs.paratrooper, self.width / 2, self.height / 2);
         }),
 
     }

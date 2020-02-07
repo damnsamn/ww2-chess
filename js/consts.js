@@ -52,5 +52,6 @@ const glyphs = {
     footsteps: "\u{F54B}",
     crosshair: "\u{F05B}",
     swords: "\u{F71D}",
-    refresh: "\u{F2F1}"
+    refresh: "\u{F2F1}",
+    cross: "\u{F00D}",
 }

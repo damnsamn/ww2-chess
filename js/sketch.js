@@ -72,7 +72,11 @@ function draw() {
             drawGame();
 
             if (checkMate) {
-                drawCheckMate();
+                drawEndGame("CHECKMATE", board.check.side.enemy.name);
+            }
+
+            if (board.loss) {
+                drawEndGame("NO MORE UNITS", board.loss.enemy.name);
             }
 
             if (promotion) {
@@ -107,13 +111,11 @@ function boardLoop(fn) {
 }
 
 function pieceLoop(fn) {
-    board.state.forEach(arr => {
-        arr.forEach(tile => {
+    for (let arr of Object.values(board.state))
+        for (let tile of arr)
             if (tile) {
                 fn(tile);
             }
-        })
-    })
 }
 
 function mouseGrid() {
@@ -418,6 +420,8 @@ function drawNewGame() {
     textFields.newGame.draw(width / 2 - boardSize / 2, height / 2 - 50, boardSize);
 
     buttons.newGameConfirm.draw(width / 2 - 125 / 2, height / 2 + 50, 125, 35)
+    let cancelSize = !mobile ? 24 : 18;
+    buttons.newGameCancel.draw(width - marginX - cancelSize, marginY / 2 + cancelSize / 4, cancelSize)
     pop();
 }
 
@@ -491,7 +495,7 @@ function drawGame() {
     }
 }
 
-function drawCheckMate() {
+function drawEndGame(msg, winner) {
     push();
     translate(-marginX, -marginY);
     if (player.view == board.sides[1].name) {
@@ -500,16 +504,16 @@ function drawCheckMate() {
         rotate(PI);
     }
 
-
     fill(0, 0, 0, 175)
     noStroke();
     rect(0, 0, width, height);
-    fill(255);
+
+    fill(colors.white);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text(`CHECKMATE`, width / 2, height / 2 - 30);
+    text(msg, width / 2, height / 2 - 30);
     textSize(20);
-    text(`${board.check.side.enemy.name} is victorious!`, width / 2, height / 2 + 30);
+    text(`${winner} is victorious!`, width / 2, height / 2 + 30);
     buttons.endGame.draw(width / 2 - 62.5, height - 75, 125, 35)
     pop();
 }
@@ -530,10 +534,10 @@ function drawPromotion() {
     let iconW = squareSize;
     let iconH = squareSize * 1.25;
 
-    buttons.promote.queen.draw(width / 2 - iconW * 3.5, height / 2 - iconH / 2, iconW, iconH);
-    buttons.promote.rook.draw(width / 2 - iconW * 1.5, height / 2 - iconH / 2, iconW, iconH);
-    buttons.promote.bishop.draw(width / 2 + iconW * 0.5, height / 2 - iconH / 2, iconW, iconH);
-    buttons.promote.knight.draw(width / 2 + iconW * 2.5, height / 2 - iconH / 2, iconW, iconH);
+    buttons.promote.tank.draw(width / 2 - iconW * 3.5, height / 2 - iconH / 2, iconW, iconH);
+    buttons.promote.artillery.draw(width / 2 - iconW * 1.5, height / 2 - iconH / 2, iconW, iconH);
+    buttons.promote.sniper.draw(width / 2 + iconW * 0.5, height / 2 - iconH / 2, iconW, iconH);
+    buttons.promote.paratrooper.draw(width / 2 + iconW * 2.5, height / 2 - iconH / 2, iconW, iconH);
 
     pop();
 }

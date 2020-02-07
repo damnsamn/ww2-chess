@@ -48,7 +48,7 @@ class Piece {
 
         if (this.cooldown) {
             noStroke();
-            let c = color(this.side.enemy.color);
+            let c = color(colors.black);
             c.setAlpha(200);
             fill(c);
             arc(squareSize / 2, squareSize / 2, squareSize, squareSize, 0, (TWO_PI / this.cooldownMax) * this.cooldown);
@@ -384,16 +384,21 @@ class Piece {
         if (board.isFirstMove)
             board.isFirstMove = false;
 
-        // Change turn
-        board.turn = this.side.enemy;
-
         // Reduce all cooldowns for this side
+        let skip = true;
         pieceLoop(piece => {
             if (piece != this && piece.cooldown)
                 piece.cooldown--;
-        });
 
-        console.log("sending data:")
+            // Make sure there are enemy pieces without cooldown, else skip enemy player and have anothe turn
+            if (piece.side.name == this.side.enemy.name && !piece.cooldown)
+                skip = false;
+        });
+        // Change turn
+        if (!skip)
+            board.turn = this.side.enemy;
+
+            console.log("sending data:")
         console.log(board)
         boardData.set(board);
 
@@ -415,7 +420,7 @@ class Piece {
                     newY += incrementY;
 
                     // Else if tile contains enemy
-                } else if (dest && dest.side.name != this.side.name) {
+                } else if (dest && (dest.side.name != this.side.name || this.type == ARTILLERY)) {
                     loopFunction(newX, newY);
                     break;
                 }
@@ -428,17 +433,18 @@ class Piece {
             incrementX,
             incrementY,
             (x, y) => {
-                if (s >= start)
-                    this.addMove(type, x, y);
-                else s++;
+                if (s >= start) {
+                    if (type != MOVEMENT || (type == MOVEMENT && !board.state[x][y]))
+                        this.addMove(type, x, y);
+                } else s++;
             }, n);
     }
 
     static grave(piece) {
-        let side = board.sides[0].name != piece.side.name ? board.sides[0] : board.sides[1];
-        if (!side.graveyard)
-            side.graveyard = [];
+        let enemySide = board.sides[0].name == piece.side.enemy.name ? board.sides[0] : board.sides[1];
+        if (!enemySide.graveyard)
+            enemySide.graveyard = [];
 
-        side.graveyard.push(piece.type);
+        enemySide.graveyard.push(piece.type);
     }
 }

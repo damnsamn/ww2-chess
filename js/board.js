@@ -248,22 +248,32 @@ class Board {
         if (board.check)
             checkBreakers = [];
 
-        // call getMoves() for every piece
-        boardLoop((x, y) => {
-            if (board.state[x - 1][y - 1] !== Null && board.turn.name == board.state[x - 1][y - 1].side.name) {
-                board.state[x - 1][y - 1].getMoves();
+        let isWhiteAlive = false, isBlackAlive = false;
+        pieceLoop(piece => {
+            // call getMoves() for every piece
+            if (board.turn.name == piece.side.name) {
+                piece.getMoves();
 
-                if (board.check == board.state[x - 1][y - 1].getGeneral())
-                    board.state[x - 1][y - 1].getCheckBreakingMoves();
+                if (board.check == piece.getGeneral())
+                    piece.getCheckBreakingMoves();
 
                 if (!board.check)
-                    board.state[x - 1][y - 1].blockCheckMoves()
+                    piece.blockCheckMoves()
             }
+
+            if (!isWhiteAlive && piece.side.name == board.sides[0].name)
+                isWhiteAlive = true;
+            if (!isBlackAlive && piece.side.name == board.sides[0].name)
+                isBlackAlive = true;
         });
 
         if (board.check && !checkBreakers.length) {
             checkMate = true;
         }
+
+
+        if (!isWhiteAlive || !isBlackAlive)
+            board.loss = !isWhiteAlive ? board.sides[0] : board.sides[1];
     }
 
 }

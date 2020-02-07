@@ -1,7 +1,7 @@
 
 // Input Events
 function mousePressed() {
-    let screenCheckMate = player.side && checkMate;
+    let screenEndGame = player.side && (checkMate || board.loss);
     let screenPromotion = player.side && promotion;
     let screenSideSelect = !player.side;
     let screenGamePlay = player.side && !promotion && !checkMate;
@@ -55,6 +55,11 @@ function mousePressed() {
                 alert("Please enter a game title")
             }
         });
+
+        buttons.newGameCancel.catchClick(() => {
+            textFields.newGame.value = '';
+            startingNewGame = false;
+        });
     }
 
     // Side Selection
@@ -79,15 +84,15 @@ function mousePressed() {
     // Promotion
     if (screenPromotion) {
         console.log("PROMOTION CLICK")
-        buttons.promote.queen.catchClick(() => { promote(promotion, TANK) })
-        buttons.promote.rook.catchClick(() => { promote(promotion, ARTILLERY) })
-        buttons.promote.bishop.catchClick(() => { promote(promotion, SNIPER) })
-        buttons.promote.knight.catchClick(() => { promote(promotion, PARATROOPER) })
+        buttons.promote.tank.catchClick(() => { promote(promotion, TANK) })
+        buttons.promote.artillery.catchClick(() => { promote(promotion, ARTILLERY) })
+        buttons.promote.sniper.catchClick(() => { promote(promotion, SNIPER) })
+        buttons.promote.paratrooper.catchClick(() => { promote(promotion, PARATROOPER) })
 
     }
 
-    // Checkmate
-    if (screenCheckMate) {
+    // Checkmate or loss of pieces
+    if (screenEndGame) {
         buttons.endGame.catchClick(endGame);
     }
 }

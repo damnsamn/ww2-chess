@@ -42,7 +42,7 @@ function getAllGames(dataObj = null) {
     }
 
     if (!dataObj)
-    appData.once('value', data => {
+        appData.once('value', data => {
             transformData(data);
         })
     else transformData(dataObj);
@@ -106,8 +106,9 @@ function joinGame(gameKey) {
 function endGame(gameKey = null) {
 
     if (gameKey)
-    appData.child(gameKey).remove();
+        appData.child(gameKey).remove();
     else {
+        allGames = {};
         gameData.remove();
     }
     boardData = null;

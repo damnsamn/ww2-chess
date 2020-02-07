@@ -4,6 +4,7 @@ class Side {
         this.color = c;
         this.active = Null;
         this.graveyard = Null;
+        this.totalPieces = 0;
     }
 
     definePieces(array) {
@@ -13,6 +14,7 @@ class Side {
         // let pieces = Object.values(obj)
         for (let piece of array) {
             board.state[piece.position.index.x][piece.position.index.y] = piece;
+            this.totalPieces++;
         }
     }
 
