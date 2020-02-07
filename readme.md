@@ -41,7 +41,7 @@ Infantry should create a shifting trench/frontline dividing the field.
 |*Melee*|[~1, 1]| Charge Forward, or Forward Flank Left/Right
 
 ## Artillery
-Artillery's ranged attacks will apply splash damage to [0, ~1] and [~1, 0] (plus pattern). To offset its splash ranged attack (hitting up to 5 units), it is slow to move and has no melee options, as well as a cooldown after each attack. 
+Artillery's ranged attacks will apply splash damage to [0, ~1] and [~1, 0] (plus pattern). To offset its splash ranged attack (hitting up to 5 units), it is slow to move and has no melee options, as well as a cooldown after each attack.
 * Attack Cooldown: 2 Turns (**Fire**, *Load*, *Load*, **Fire**)
 * Friendly Fire Enabled
 * Diagonal Firing?
@@ -60,7 +60,7 @@ Artillery's ranged attacks will apply splash damage to [0, ~1] and [~1, 0] (plus
 
 ## Paratrooper
 
-Paratroopers can "teleport" (parachute) to any unoccupied space on the board, while incurring a 1-turn cooldown after doing so. During cooldown, their HP is temporarily set to 1, making any incoming attack an instant-kill. Once landed, can melee any adjacent square, or shoot any tile 1 out from that.
+Paratroopers can "teleport" (parachute) to any unoccupied space on the board, while incurring a 1-turn cooldown after doing so. During cooldown, their HP is temporarily set to 1, making any incoming attack an instant-kill. Once landed, can melee any adjacent square, or shoot any tile 2 away in any direction.
 * Movement Cooldown:  1 Turn (**Parachute**, *Land*, **Attack**)
 * Temporary =1HP during cooldown
 
@@ -73,17 +73,18 @@ Paratroopers can "teleport" (parachute) to any unoccupied space on the board, wh
 ### Attacks
 |Type | Pattern| Description |
 |--:|:--|:--|
-|*Ranged*|[+-2, ~2]| Shoot any square 2 away
-|*Ranged*|[~2, +-2]| 
+|*Ranged*|[0, +-2]| Shoot Vertical
+|*Ranged*|[+-2, 0]| Shoot Horizontal
+|*Ranged*|[+-2, +-2]| Shoot Diagonal
 |*Melee*|[~1, ~1]| Melee adjacent squares
 
 ## Sniper
-Snipers can ranged attack any enemy in vert/horz/diag line-of-sight. They can move up to 2 squares in any direction to manouvre to more advantageous positions.
+Snipers can ranged attack any enemy in vert/horz/diag line-of-sight. They can move 1 square in any direction to manouvre to more advantageous positions.
 
 ### Moves
 |Pattern|Description|
 |:--|:--|
-|[~2, ~2]|Move 1 or 2 in any direction|
+|[~1, ~1]|Move 1 in any direction|
 
 ### Attacks
 |Type | Pattern| Description |
@@ -93,16 +94,19 @@ Snipers can ranged attack any enemy in vert/horz/diag line-of-sight. They can mo
 |*Ranged*|[+-n, +-n]| Snipe Snipe Diagonal
 |*Melee*|[~1, ~1]| Melee adjacent squares
 
-## TANK
-Tanks are highly powerful units that can move to or attack any square in vert/horz/diag line-of-sight.
+## Tank
+Tanks are highly powerful units. In any direction, they can move or melee within 3 squares. Any further out than 3, Tanks can shoot opponents that they can't melee.
 ### Moves and Attacks
 |Pattern|Description|
 |:--|:--|
-|[0, +-n]|Move/Ranged/Melee Vertical
-|[+-n, 0]|Move/Ranged/Melee Horizontal
-|[+-n, +-n]|Move/Ranged/Melee Diagonal
+|[0, +-3]|Move/Melee Vertical up to 3
+|[+-3, 0]|Move/Melee Horizontal up to 3
+|[+-3, +-3]|Move/Melee Diagonal up to 3
+|[0, n+-4]|Ranged Vertical 4+
+|[n+-4, 0]|Ranged Horizontal 4+
+|[n+-4, n+-4]|Ranged Diagonal 4+
 
-## GENERAL
+## General
 General is our King equivalent, with a moveset limited to his immediate surroundings. Since each skirmish is only an individual battle, death/checkmate of the General does not equate to a loss. At the loss of a General, the player can either forfeit or play on with a global -1hp modifier (loss of morale). This makes the General a highly valuable target, but confident players can still maintain a win if they play right.
 * Can be captured via normal checkmate rules if 1HP
 * On death/capture, each unit incurs a -1HP morale penalty
@@ -114,5 +118,5 @@ General is our King equivalent, with a moveset limited to his immediate surround
 |Type | Pattern| Description |
 |--:|:--|:--|
 |*Ranged*|[+-2, ~2]| Shoot any square 2 away
-|*Ranged*|[~2, +-2]| 
+|*Ranged*|[~2, +-2]|
 |*Melee*|[~1, ~1]| Melee adjacent squares

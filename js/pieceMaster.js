@@ -5,7 +5,7 @@ class Piece {
         melee: []
     }
 
-    constructor(type, side, posX, posY, moves = null, moved = false, hp = 2, cooldown = 0) {
+    constructor(type, side, posX, posY, moves = null, moved = false, hp = 2, cooldown = null) {
         this.type = type;
         this.side = side;
         this.position = {
@@ -18,7 +18,17 @@ class Piece {
         }
         this.glyph = setGlyph(this.type);
         this.hp = hp;
-        this.cooldown = cooldown;
+        if (cooldown)
+            this.cooldown = cooldown;
+        else
+            this.cooldown = {
+                current: 0,
+                max: 0,
+                hp: {
+                    original: hp,
+                    temp: 1
+                }
+            }
 
         if (moves)
             this.moves = moves;
@@ -46,12 +56,16 @@ class Piece {
         fill(fillColor);
         text(this.glyph, squareSize / 2, squareSize / 2 - iconSize / 8);
 
-        if (this.cooldown) {
+        if (this.cooldown.current) {
             noStroke();
             let c = color(colors.black);
             c.setAlpha(200);
             fill(c);
-            arc(squareSize / 2, squareSize / 2, squareSize, squareSize, 0, (TWO_PI / this.cooldownMax) * this.cooldown);
+            square(0, 0, squareSize);
+            c = color(colors.white);
+            c.setAlpha(200);
+            fill(c)
+            arc(squareSize / 2, squareSize / 2, squareSize / 2, squareSize / 2, 0, (TWO_PI / (this.cooldown.max * 2)) * this.cooldown.current, PIE);
         }
 
 
@@ -64,6 +78,12 @@ class Piece {
             circle(squareSize - 5 - 3, squareSize - 5 - 3, 5);
         if (this.hp > 1)
             circle(squareSize - 15 - 3, squareSize - 5 - 3, 5);
+        else if (this.cooldown.current && this.cooldown.hp.original > this.hp) {
+            fill(colors.gray);
+            stroke(colors.gray);
+            circle(squareSize - 15 - 3, squareSize - 5 - 3, 5);
+
+        }
 
         pop();
     }
@@ -76,8 +96,8 @@ class Piece {
         }
     }
 
-    addMove(type, row, col) {
-        this.moves[type].push({ x: row, y: col });
+    addMove(type, row, col, cooldown = false) {
+        this.moves[type].push({ x: row, y: col, cooldown: cooldown });
     }
 
     getMoves() {
@@ -134,7 +154,16 @@ class Piece {
                 stroke(lighten(glyphColor, 0.25))
                 strokeWeight(2);
             }
-            text(glyph, 0, 0);
+
+            let g = glyph;
+            if (this.type == PARATROOPER && moveType == MOVEMENT &&
+                ((move.x < this.position.index.x - 1 || move.x > this.position.index.x + 1) ||
+                    (move.y < this.position.index.y - 1 || move.y > this.position.index.y + 1))) {
+                g = glyphs.target;
+                glyphColor.setAlpha(75)
+                fill(glyphColor)
+            }
+            text(g, 0, 0);
             pop();
         })
     }
@@ -155,7 +184,8 @@ class Piece {
 
         this.loopAllMoves((move, type) => {
             if (x == move.x && y == move.y) {
-                possibleMoves.push({ type: type, x: x, y: y });
+                move.type = type;
+                possibleMoves.push(move);
             }
         });
 
@@ -170,9 +200,11 @@ class Piece {
 
     doMove(move) {
         switch (move.type) {
-            //
             default:
                 let mockMove = this.beginMovement(move.x, move.y);
+                if (move.cooldown) {
+                    this.startCooldown();
+                }
                 this.commitMovement(mockMove.original, mockMove.destination);
                 break;
             case RANGED:
@@ -197,7 +229,9 @@ class Piece {
                         board.lastMove.push({ x: move.x, y: move.y + y, color: colors.red });
                     }
                 }
-                this.startCooldown();
+                if (move.cooldown) {
+                    this.startCooldown();
+                }
                 this.endMove();
 
                 break;
@@ -216,8 +250,11 @@ class Piece {
     }
 
     startCooldown() {
-        if (this.cooldownMax)
-            this.cooldown = this.cooldownMax;
+        if (this.cooldown.max) {
+            this.cooldown.current = this.cooldown.max * 2;
+            this.cooldown.hp.original = this.hp;
+            this.hp = this.cooldown.hp.temp;
+        }
     }
 
     getGeneral() {
@@ -387,18 +424,21 @@ class Piece {
         // Reduce all cooldowns for this side
         let skip = true;
         pieceLoop(piece => {
-            if (piece != this && piece.cooldown)
-                piece.cooldown--;
+            if (piece != this && piece.cooldown.current) {
+                piece.cooldown.current--;
+                if (!piece.cooldown.current)
+                    piece.hp = piece.cooldown.hp.original;
+            }
 
             // Make sure there are enemy pieces without cooldown, else skip enemy player and have anothe turn
-            if (piece.side.name == this.side.enemy.name && !piece.cooldown)
+            if (piece.side.name == this.side.enemy.name && !piece.cooldown.current)
                 skip = false;
         });
         // Change turn
         if (!skip)
             board.turn = this.side.enemy;
 
-            console.log("sending data:")
+        console.log("sending data:")
         console.log(board)
         boardData.set(board);
 
@@ -427,17 +467,27 @@ class Piece {
             }
     }
 
-    moveLoop(type, incrementX, incrementY, start = 0, n = 0) {
+    moveLoop(type, incrementX, incrementY, cooldown = false, start = 0, n = 0) {
         let s = 0;
         this.loopIncrement(
             incrementX,
             incrementY,
             (x, y) => {
                 if (s >= start) {
-                    if (type != MOVEMENT || (type == MOVEMENT && !board.state[x][y]))
-                        this.addMove(type, x, y);
+                    if ((type != MOVEMENT && board.state[x][y]) || (type == MOVEMENT && !board.state[x][y]))
+                        this.addMove(type, x, y, cooldown);
                 } else s++;
             }, n);
+    }
+
+    attackLoop(type, incrementX, incrementY, cooldown = false, start = 0, n = 0) {
+        this.loopIncrement(
+            incrementX,
+            incrementY,
+            (x, y) => {
+                if (board.state[x][y])
+                    this.addMove(type, x, y, cooldown);
+            });
     }
 
     static grave(piece) {

@@ -40,3 +40,14 @@ function lighten(c, s) {
 
     return color(r, g, b);
 }
+
+function middleColor(c1, c2) {
+    c1 = color(c1);
+    c2 = color(c2);
+
+    let diffR = red(c2) - red(c1)
+    let diffG = green(c2) - green(c1)
+    let diffB = blue(c2) - blue(c1)
+
+    return color(red(c1)+diffR/2, green(c1)+diffG/2, blue(c1)+diffB/2);
+}

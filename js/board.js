@@ -178,6 +178,8 @@ class Board {
 
             colors.white = this.sides[0].color;
             colors.black = this.sides[1].color;
+            let gray = middleColor(colors.white, colors.black);
+            colors.gray = gray;
 
             bg = colors.black;
         }
@@ -186,7 +188,9 @@ class Board {
 
 
     checkPositionIsOccupied(x, y) {
-        return board.state[x][y];
+        if (x < 0 || x > 7 || y < 0 || y > 7)
+            return false
+        else return board.state[x][y];
     }
 
     updateData(data) {
@@ -242,7 +246,8 @@ class Board {
 
         // set check
         for (let general of getPiecesOfType(GENERAL)) {
-            general.checkLoop();
+            if (general.hp == 1)
+                general.checkLoop();
         }
 
         if (board.check)

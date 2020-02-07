@@ -151,7 +151,7 @@ function selectPieceAtMouse() {
             player.selectedPiece = selection;
 
         // Limit selection to players' own side
-        else if (selection.side.name == player.side.name && !selection.cooldown) {
+        else if (selection.side.name == player.side.name && !selection.cooldown.current) {
             // Deselect, if clicking selected piece
             if (selection == player.selectedPiece)
                 selection = player.selectedPiece = null;
@@ -211,52 +211,53 @@ function initialiseBoard() {
 
     var whiteSide = new Side("White", "#e6d9ca");
     whiteSide.definePieces([
-        new Artillery(whiteSide, D, 2),
-        new Artillery(whiteSide, F, 2),
-        // new Infantry(whiteSide, A, 2),
-        // new Infantry(whiteSide, B, 2),
-        // new Infantry(whiteSide, C, 2),
-        // new Infantry(whiteSide, D, 2),
-        // new Infantry(whiteSide, E, 2),
-        // new Infantry(whiteSide, F, 2),
-        // new Infantry(whiteSide, G, 2),
-        // new Infantry(whiteSide, H, 2),
-        // new Artillery(whiteSide, A, 1),
-        // new Paratrooper(whiteSide, B, 1),
-        // new Sniper(whiteSide, C, 1),
-        // new Tank(whiteSide, D, 1),
-        // new General(whiteSide, E, 1), // E1
-        // new Sniper(whiteSide, F, 1),
-        // new Paratrooper(whiteSide, G, 1),
-        // new Artillery(whiteSide, H, 1)
+        // new Sniper(whiteSide, D, 2),
+        // new Artillery(whiteSide, F, 2),
+        // new Paratrooper(whiteSide, E, 2),
+        new Infantry(whiteSide, A, 2),
+        new Infantry(whiteSide, B, 2),
+        new Infantry(whiteSide, C, 2),
+        new Infantry(whiteSide, D, 2),
+        new Infantry(whiteSide, E, 2),
+        new Infantry(whiteSide, F, 2),
+        new Infantry(whiteSide, G, 2),
+        new Infantry(whiteSide, H, 2),
+        new Artillery(whiteSide, A, 1),
+        new Paratrooper(whiteSide, B, 1),
+        new Sniper(whiteSide, C, 1),
+        new Tank(whiteSide, D, 1),
+        new General(whiteSide, E, 1), // E1
+        new Sniper(whiteSide, F, 1),
+        new Paratrooper(whiteSide, G, 1),
+        new Artillery(whiteSide, H, 1)
     ]);
 
     var blackSide = new Side("Black", "#26201c");
     blackSide.definePieces([
-        new Infantry(blackSide, C, 6),
-        new Infantry(blackSide, D, 6),
-        new Infantry(blackSide, E, 6),
-        new Infantry(blackSide, F, 6),
-        new Infantry(blackSide, C, 7),
-        new Infantry(blackSide, D, 7),
-        new Infantry(blackSide, E, 7),
-        new Infantry(blackSide, F, 7),
-        // new Infantry(blackSide, A, 7),
-        // new Infantry(blackSide, B, 7),
+        // new Infantry(blackSide, C, 6),
+        // new Infantry(blackSide, D, 6),
+        // new Infantry(blackSide, E, 6),
+        // new Infantry(blackSide, F, 6),
         // new Infantry(blackSide, C, 7),
         // new Infantry(blackSide, D, 7),
         // new Infantry(blackSide, E, 7),
         // new Infantry(blackSide, F, 7),
-        // new Infantry(blackSide, G, 7),
-        // new Infantry(blackSide, H, 7),
-        // new Artillery(blackSide, A, 8),
-        // new Paratrooper(blackSide, B, 8),
-        // new Sniper(blackSide, C, 8),
-        // new Tank(blackSide, D, 8), // D8
-        // new General(blackSide, E, 8),
-        // new Sniper(blackSide, F, 8),
-        // new Paratrooper(blackSide, G, 8),
-        // new Artillery(blackSide, H, 8)
+        new Infantry(blackSide, A, 7),
+        new Infantry(blackSide, B, 7),
+        new Infantry(blackSide, C, 7),
+        new Infantry(blackSide, D, 7),
+        new Infantry(blackSide, E, 7),
+        new Infantry(blackSide, F, 7),
+        new Infantry(blackSide, G, 7),
+        new Infantry(blackSide, H, 7),
+        new Artillery(blackSide, A, 8),
+        new Paratrooper(blackSide, B, 8),
+        new Sniper(blackSide, C, 8),
+        new Tank(blackSide, D, 8), // D8
+        new General(blackSide, E, 8),
+        new Sniper(blackSide, F, 8),
+        new Paratrooper(blackSide, G, 8),
+        new Artillery(blackSide, H, 8)
     ]);
     player.view = board.sides[0].name;
 }
@@ -331,8 +332,8 @@ function promote(piece, target) {
     if (board.isFirstMove)
         board.isFirstMove = false;
 
-    if (destination != Null)
-        this.side.graveyard.push(destination.type);
+    // if (destination != Null)
+    //     this.side.graveyard.push(destination.type);
 
     board.turn = piece.side.enemy;
 

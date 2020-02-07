@@ -1,5 +1,5 @@
 class Infantry extends Piece {
-    constructor(side, gridX, gridY, moves = null, moved = false, hp = 2, ) {
+    constructor(side, gridX, gridY, moves = null, moved = false, hp = 2) {
         super(INFANTRY, side, gridX, gridY, moves, moved, hp);
     }
 
@@ -45,57 +45,63 @@ class Infantry extends Piece {
 }
 
 class Artillery extends Piece {
-    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2, cooldown = 0) {
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2, cooldown = null) {
         super(ARTILLERY, side, gridX, gridY, moves, moved, hp, cooldown);
 
-        this.cooldownMax = 3;
+        this.cooldown.max = 2;
     }
 
     getMoves() {
         this.initMovesObj();
 
-        // Movement
-
-        // Rannged
         for (let x = -1; x <= 1; x++)
             for (let y = -1; y <= 1; y++) {
-                // Ranged
-                this.moveLoop(MOVEMENT, x, y, 0, 1);
-
                 // Movement
-                this.moveLoop(RANGED, x, y, 2, 0);
-            }
+                this.moveLoop(MOVEMENT, x, y, false, 0, 1);
 
-        // for (let x = -1; x <= 1; x++)
-        //     if (x != 0)
-        //         this.moveLoop(x, 0);
-        //     else
-        //         for (let y = -1; y <= 1; y += 2)
-        //             this.moveLoop(x, y);
+                // Ranged
+                this.moveLoop(RANGED, x, y, true, 2, 0);
+            }
 
     }
 }
 
 class Paratrooper extends Piece {
-    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2) {
-        super(PARATROOPER, side, gridX, gridY, moves, moved, hp);
+    constructor(side, gridX, gridY, moves = {}, moved = false, hp = 2, cooldown = null) {
+        super(PARATROOPER, side, gridX, gridY, moves, moved, hp, cooldown);
+
+        this.cooldown.max = 1;
     }
 
     getMoves() {
-        // this.moves = {};
+        this.initMovesObj();
+        let target, path;
 
-        // for (let x = -2; x <= 2; x++)
-        //     if (x != 0)
-        //         if (x % 2 == 0) {
-        //             for (let y = -1; y <= 1; y++)
-        //                 if (y != 0)
-        //                     this.moveLoop(x, y, 1);
-        //         }
-        //         else
-        //             for (let y = -2; y <= 2; y++)
-        //                 if (y % 2 == 0 && y != -0)
-        //                     this.moveLoop(x, y, 1);
+        for (let x = -2; x <= 2; x++)
+            for (let y = -2; y <= 2; y++) {
+                target = board.checkPositionIsOccupied(this.position.index.x + x, this.position.index.y + y);
+                if (x % 2 == 0 && y % 2 == 0)
+                    path = board.checkPositionIsOccupied(this.position.index.x + x / 2, this.position.index.y + y / 2)
 
+                // Walk or melee within one tile
+                if (x > -2 && x < 2 &&
+                    y > -2 && y < 2)
+                    this.moveLoop(target ? MELEE : MOVEMENT, x, y, false, 0, 1);
+                else if (target && !path && (x % 2 == 0 && y % 2 == 0)) {
+                    // Ranged at 2 tiles
+                    this.moveLoop(RANGED, x, y, false, 0, 1);
+                }
+            }
+
+        // Parachute
+        boardLoop((x, y) => {
+            x--;
+            y--;
+            if (board.state[x][y] == Null &&
+                ((x < this.position.index.x - 1 || x > this.position.index.x + 1) ||
+                    (y < this.position.index.y - 1 || y > this.position.index.y + 1)))
+                this.addMove(MOVEMENT, x, y, true)
+        })
     }
 }
 
@@ -105,11 +111,13 @@ class Sniper extends Piece {
     }
 
     getMoves() {
-        // this.moves = {};
+        this.initMovesObj();
 
-        // for (let x = -1; x <= 1; x += 2)
-        //     for (let y = -1; y <= 1; y += 2)
-        //         this.moveLoop(x, y);
+        for (let x = -1; x <= 1; x++)
+            for (let y = -1; y <= 1; y++) {
+                this.moveLoop(MOVEMENT, x, y, false, 0, 1);
+                this.moveLoop(RANGED, x, y);
+            }
     }
 }
 
@@ -119,11 +127,15 @@ class Tank extends Piece {
     }
 
     getMoves() {
-        // this.moves = {};
+        this.initMovesObj();
 
-        // for (let x = -1; x <= 1; x++)
-        //     for (let y = -1; y <= 1; y++)
-        //         this.moveLoop(x, y);
+        for (let x = -1; x <= 1; x++)
+            for (let y = -1; y <= 1; y++) {
+                let range = 3;
+                this.moveLoop(RANGED, x, y, false, range, 0);
+                this.moveLoop(MOVEMENT, x, y, false, 0, range);
+                this.moveLoop(MELEE, x, y, false, 0, range);
+            }
     }
 }
 
