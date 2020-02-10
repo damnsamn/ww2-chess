@@ -353,17 +353,17 @@ function promote(piece, target) {
 function setGlyph(type) {
     switch (type) {
         case INFANTRY:
-            return glyphs.fa.infantry;
+            return glyphs.chess.infantry;
         case ARTILLERY:
-            return glyphs.fa.artillery;
+            return glyphs.chess.artillery;
         case PARATROOPER:
-            return glyphs.fa.paratrooper;
+            return glyphs.chess.paratrooper;
         case SNIPER:
-            return glyphs.fa.sniper;
+            return glyphs.chess.sniper;
         case TANK:
-            return glyphs.fa.tank;
+            return glyphs.chess.tank;
         case GENERAL:
-            return glyphs.fa.general;
+            return glyphs.chess.general;
     }
 }
 
@@ -489,7 +489,7 @@ function drawGame() {
                 rotate(PI);
                 translate(0, -height + marginY / 1.5);
             }
-            setupFontAwesomeGlyphStyle(20);
+            setupChessGlyphStyle(20);
             strokeWeight(3);
             for (let piece of side.graveyard) {
                 fill(side.enemy.color);

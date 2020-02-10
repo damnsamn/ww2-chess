@@ -43,7 +43,7 @@ class Piece {
         let fillColor = color(this.side.color || "#ff0000");
         let strokeColor = color(this.side.enemy ? this.side.enemy.color : "#ff0000");
         push();
-        setupFontAwesomeGlyphStyle();
+        setupChessGlyphStyle();
 
         translate((this.position.index.x) * squareSize, (8 - this.position.index.y - 1) * squareSize);
         if (player.view == board.sides[1].name) {
