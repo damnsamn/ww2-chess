@@ -39,12 +39,12 @@ const MELEE = "melee";
 // Glyphs object
 const glyphs = {
     chess: {
-        infantry: "\u{E902}",
-        artillery: "\u{E900}",
-        paratrooper: "\u{E903}",
-        sniper: "\u{E904}",
-        tank: "\u{E905}",
-        general: "\u{E901}",
+        infantry: "\u{E900}",
+        artillery: "\u{E901}",
+        paratrooper: "\u{E9021}",
+        sniper: "\u{E903}",
+        tank: "\u{E904}",
+        general: "\u{E905}",
     },
     fa: {
         pawn: "\u{F443}",
