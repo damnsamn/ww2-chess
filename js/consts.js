@@ -18,7 +18,8 @@ const boardSize = w * 0.75;
 const marginX = (w - boardSize) / 2;
 const marginY = (h - boardSize) / 2;
 const squareSize = boardSize / 8;
-const iconFontPath = 'assets/fa-solid-900.ttf';
+const chessIconFontPath = 'assets/ww2-chess.ttf';
+const fontAwesomeFontPath = 'assets/fa-solid-900.ttf';
 const textFontPath = 'assets/RobotoMono-Bold.ttf';
 const iconSize = squareSize / 1.5;
 
@@ -37,22 +38,32 @@ const MELEE = "melee";
 
 // Glyphs object
 const glyphs = {
-    pawn: "\u{F443}",
-    rook: "\u{F447}",
-    knight: "\u{F441}",
-    bishop: "\u{F43A}",
-    queen: "\u{F445}",
-    king: "\u{F43F}",
-    infantry: "\u{F925}",
-    artillery: "\u{F1E2}",
-    paratrooper: "\u{F4CD}",
-    sniper: "\u{F05B}",
-    tank: "\u{F1B9}",
-    general: "\u{F508}",
-    footsteps: "\u{F54B}",
-    crosshair: "\u{F05B}",
-    swords: "\u{F71D}",
-    refresh: "\u{F2F1}",
-    cross: "\u{F00D}",
-    target: "\u{F192}",
+    chess: {
+        infantry: "\u{E902}",
+        artillery: "\u{E900}",
+        paratrooper: "\u{E903}",
+        sniper: "\u{E904}",
+        tank: "\u{E905}",
+        general: "\u{E901}",
+    },
+    fa: {
+        pawn: "\u{F443}",
+        rook: "\u{F447}",
+        knight: "\u{F441}",
+        bishop: "\u{F43A}",
+        queen: "\u{F445}",
+        king: "\u{F43F}",
+        infantry: "\u{F925}",
+        artillery: "\u{F1E2}",
+        paratrooper: "\u{F4CD}",
+        sniper: "\u{F05B}",
+        tank: "\u{F1B9}",
+        general: "\u{F508}",
+        footsteps: "\u{F54B}",
+        crosshair: "\u{F05B}",
+        swords: "\u{F71D}",
+        refresh: "\u{F2F1}",
+        cross: "\u{F00D}",
+        target: "\u{F192}",
+    }
 }

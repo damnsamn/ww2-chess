@@ -55,26 +55,26 @@ var buttons = {
         text("CONFIRM", self.width / 2, self.height / 2 - labelSize / 4);
     }),
     newGameCancel: new Button((x, y, self) => {
-        setupGlyphStyle(self.width);
+        setupFontAwesomeGlyphStyle(self.width);
         fill(colors.white);
-        text(glyphs.cross, self.width / 2, self.height / 2);
+        text(glyphs.fa.cross, self.width / 2, self.height / 2);
     }),
     gameListRefresh: new Button((x, y, self) => {
-        setupGlyphStyle(self.width);
+        setupFontAwesomeGlyphStyle(self.width);
         fill(colors.white);
-        text(glyphs.refresh, self.width / 2, self.height / 2);
+        text(glyphs.fa.refresh, self.width / 2, self.height / 2);
     }),
     selectWhite: new Button((x, y, self) => {
-        setupGlyphStyle(squareSize);
+        setupFontAwesomeGlyphStyle(squareSize);
         fill(colors.white);
         stroke(colors.black);
-        text(glyphs.general, self.width / 2, self.height / 2);
+        text(glyphs.fa.general, self.width / 2, self.height / 2);
     }),
     selectBlack: new Button((x, y, self) => {
-        setupGlyphStyle(squareSize);
+        setupFontAwesomeGlyphStyle(squareSize);
         fill(colors.black);
         stroke(colors.white);
-        text(glyphs.general, self.width / 2, self.height / 2);
+        text(glyphs.fa.general, self.width / 2, self.height / 2);
     }),
     endGame: new Button((x, y, self) => {
         textSize(mobile ? 12 : 16);
@@ -94,28 +94,28 @@ var buttons = {
     }),
     promote: {
         tank: new Button((x, y, self) => {
-            setupGlyphStyle(squareSize);
+            setupFontAwesomeGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.tank, self.width / 2, self.height / 2);
+            text(glyphs.fa.tank, self.width / 2, self.height / 2);
         }),
         artillery: new Button((x, y, self) => {
-            setupGlyphStyle(squareSize);
+            setupFontAwesomeGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.artillery, self.width / 2, self.height / 2);
+            text(glyphs.fa.artillery, self.width / 2, self.height / 2);
         }),
         sniper: new Button((x, y, self) => {
-            setupGlyphStyle(squareSize);
+            setupFontAwesomeGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.sniper, self.width / 2, self.height / 2);
+            text(glyphs.fa.sniper, self.width / 2, self.height / 2);
         }),
         paratrooper: new Button((x, y, self) => {
-            setupGlyphStyle(squareSize);
+            setupFontAwesomeGlyphStyle(squareSize);
             fill(promotion.side.color);
             stroke(promotion.side.enemy.color);
-            text(glyphs.paratrooper, self.width / 2, self.height / 2);
+            text(glyphs.fa.paratrooper, self.width / 2, self.height / 2);
         }),
 
     }

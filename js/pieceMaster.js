@@ -43,7 +43,7 @@ class Piece {
         let fillColor = color(this.side.color || "#ff0000");
         let strokeColor = color(this.side.enemy ? this.side.enemy.color : "#ff0000");
         push();
-        setupGlyphStyle();
+        setupFontAwesomeGlyphStyle();
 
         translate((this.position.index.x) * squareSize, (8 - this.position.index.y - 1) * squareSize);
         if (player.view == board.sides[1].name) {
@@ -148,7 +148,7 @@ class Piece {
 
             glyphColor.setAlpha(175);
             fill(glyphColor);
-            setupGlyphStyle(size);
+            setupFontAwesomeGlyphStyle(size);
             noStroke();
             if (board.state[move.x][move.y]) {
                 stroke(lighten(glyphColor, 0.25))
@@ -159,7 +159,7 @@ class Piece {
             if (this.type == PARATROOPER && moveType == MOVEMENT &&
                 ((move.x < this.position.index.x - 1 || move.x > this.position.index.x + 1) ||
                     (move.y < this.position.index.y - 1 || move.y > this.position.index.y + 1))) {
-                g = glyphs.target;
+                g = glyphs.fa.target;
                 glyphColor.setAlpha(75)
                 fill(glyphColor)
             }
@@ -172,9 +172,9 @@ class Piece {
 
         if (this.moves) {
 
-            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.footsteps, iconSize * 0.5, true);
-            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.crosshair, iconSize * 0.8);
-            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.swords, iconSize * 0.8);
+            this.drawLoopMovesOfType(MOVEMENT, darken(color(colors.blue), 0.75), glyphs.fa.footsteps, iconSize * 0.5, true);
+            this.drawLoopMovesOfType(RANGED, color(colors.red), glyphs.fa.crosshair, iconSize * 0.8);
+            this.drawLoopMovesOfType(MELEE, color(colors.red), glyphs.fa.swords, iconSize * 0.8);
 
         }
     }

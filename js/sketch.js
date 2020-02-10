@@ -10,7 +10,7 @@ var player = {
 var loaded;
 var incomingData;
 var board;
-var fontIcon, fontText;
+var fontChess, fontIcons, fontText;
 var checkMate = false;
 var checkBreakers = [];
 var activity = {};
@@ -27,7 +27,8 @@ var colors = {
 }
 
 function preload() {
-    fontIcon = loadFont(iconFontPath);
+    fontChess = loadFont(chessIconFontPath);
+    fontIcons = loadFont(fontAwesomeFontPath);
     fontText = loadFont(textFontPath);
 }
 
@@ -262,9 +263,15 @@ function initialiseBoard() {
     player.view = board.sides[0].name;
 }
 
-function setupGlyphStyle(size = iconSize) {
+function setupChessGlyphStyle(size = iconSize) {
     strokeWeight(6);
-    textFont(fontIcon, size)
+    textFont(fontChess, size)
+    textAlign(CENTER, CENTER)
+}
+
+function setupFontAwesomeGlyphStyle(size = iconSize) {
+    strokeWeight(6);
+    textFont(fontIcons, size)
     textAlign(CENTER, CENTER)
 }
 
@@ -346,17 +353,17 @@ function promote(piece, target) {
 function setGlyph(type) {
     switch (type) {
         case INFANTRY:
-            return glyphs.infantry;
+            return glyphs.fa.infantry;
         case ARTILLERY:
-            return glyphs.artillery;
+            return glyphs.fa.artillery;
         case PARATROOPER:
-            return glyphs.paratrooper;
+            return glyphs.fa.paratrooper;
         case SNIPER:
-            return glyphs.sniper;
+            return glyphs.fa.sniper;
         case TANK:
-            return glyphs.tank;
+            return glyphs.fa.tank;
         case GENERAL:
-            return glyphs.general;
+            return glyphs.fa.general;
     }
 }
 
@@ -482,7 +489,7 @@ function drawGame() {
                 rotate(PI);
                 translate(0, -height + marginY / 1.5);
             }
-            setupGlyphStyle(20);
+            setupFontAwesomeGlyphStyle(20);
             strokeWeight(3);
             for (let piece of side.graveyard) {
                 fill(side.enemy.color);
