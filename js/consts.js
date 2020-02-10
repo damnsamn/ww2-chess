@@ -41,7 +41,7 @@ const glyphs = {
     chess: {
         infantry: "\u{E900}",
         artillery: "\u{E901}",
-        paratrooper: "\u{E9021}",
+        paratrooper: "\u{E902}",
         sniper: "\u{E903}",
         tank: "\u{E904}",
         general: "\u{E905}",
