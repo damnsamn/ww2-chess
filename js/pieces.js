@@ -115,7 +115,7 @@ class Sniper extends Piece {
 
         for (let x = -1; x <= 1; x++)
             for (let y = -1; y <= 1; y++) {
-                this.moveLoop(MOVEMENT, x, y, false, 0, 1);
+                this.moveLoop(MOVEMENT, x, y, false, 0, 2);
                 this.moveLoop(RANGED, x, y);
             }
     }
