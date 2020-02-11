@@ -408,6 +408,12 @@ class Piece {
         if (destination.piece != Null)
             Piece.grave(destination.piece);
 
+        // General KIA
+        if (destination.piece.type == GENERAL) {
+            let generalSide = destination.piece.side.name == board.sides[0].name ? board.sides[0] : board.sides[1];
+            generalSide.generalKIA = true;
+        }
+
 
         if (!promotion) {
             this.endMove();

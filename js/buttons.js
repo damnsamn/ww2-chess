@@ -85,6 +85,24 @@ var buttons = {
         textAlign(CENTER, CENTER);
         text("END GAME", self.width / 2, self.height / 2 - 16 / 4);
     }),
+    retreat: new Button((x, y, self) => {
+        textSize(mobile ? 12 : 16);
+        noStroke();
+        fill(colors.red);
+        rect(x, y, self.width, self.height, 3);
+        fill(colors.white)
+        textAlign(CENTER, CENTER);
+        text("RETREAT", self.width / 2, self.height / 2 - 16 / 4);
+    }),
+    keepFighting: new Button((x, y, self) => {
+        textSize(mobile ? 12 : 16);
+        noStroke();
+        fill(colors.green);
+        rect(x, y, self.width, self.height, 3);
+        fill(colors.white)
+        textAlign(CENTER, CENTER);
+        text("KEEP FIGHTING", self.width / 2, self.height / 2 - 16 / 4);
+    }),
     resetBoard: new Button((x, y, self) => {
         textSize(mobile ? 12 : 16);
         fill(colors.red);

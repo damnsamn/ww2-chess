@@ -80,13 +80,19 @@ function draw() {
                 drawEndGame("NO MORE UNITS", board.loss.enemy.name);
             }
 
+            if (getPlayerSideOfBoard().generalKIA) {
+                drawGeneralKIA();
+            }
+
             if (promotion) {
                 drawPromotion();
             }
 
-            if (player.view == board.sides[1].name) {
-                pop();
-            }
+            if (player.side.name)
+
+                if (player.view == board.sides[1].name) {
+                    pop();
+                }
 
             pop();
 
@@ -193,18 +199,29 @@ function getSideAtCoordinate(col, row) {
         return false;
 }
 
+function getPlayerSideOfBoard() {
+    if (player.side)
+        return player.side.name == board.sides[0].name ? board.sides[0] : board.sides[1];
+    else return null;
+}
+
 function resetBoard() {
-    boardData.remove();
-    initialiseBoard();
-    setAllActivity(false);
-    player.side = null;
-    board.active = false;
-    promotion = false;
-    console.log("sending data:")
-    boardData.set(board);
-    checkMate = false;
-    noLoop();
-    loop();
+    if (loadedGame.name) {
+        boardData.remove();
+        initialiseBoard();
+        setAllActivity(false);
+        player.side = null;
+        board.active = false;
+        promotion = false;
+        console.log("sending data:")
+        boardData.set(board);
+        checkMate = false;
+        noLoop();
+        loop();
+    } else {
+        endGame();
+    }
+
 }
 
 function initialiseBoard() {
@@ -212,53 +229,45 @@ function initialiseBoard() {
 
     var whiteSide = new Side("White", "#e6d9ca");
     whiteSide.definePieces([
-        // new Sniper(whiteSide, D, 2),
-        // new Artillery(whiteSide, F, 2),
-        // new Paratrooper(whiteSide, E, 2),
-        new Infantry(whiteSide, A, 2),
-        new Infantry(whiteSide, B, 2),
-        new Infantry(whiteSide, C, 2),
-        new Infantry(whiteSide, D, 2),
-        new Infantry(whiteSide, E, 2),
-        new Infantry(whiteSide, F, 2),
-        new Infantry(whiteSide, G, 2),
-        new Infantry(whiteSide, H, 2),
-        new Artillery(whiteSide, A, 1),
-        new Paratrooper(whiteSide, B, 1),
-        new Sniper(whiteSide, C, 1),
-        new Tank(whiteSide, D, 1),
-        new General(whiteSide, E, 1), // E1
-        new Sniper(whiteSide, F, 1),
-        new Paratrooper(whiteSide, G, 1),
-        new Artillery(whiteSide, H, 1)
+        new Tank(whiteSide, D, 2),
+        // new Infantry(whiteSide, A, 2),
+        // new Infantry(whiteSide, B, 2),
+        // new Infantry(whiteSide, C, 2),
+        // new Infantry(whiteSide, D, 2),
+        // new Infantry(whiteSide, E, 2),
+        // new Infantry(whiteSide, F, 2),
+        // new Infantry(whiteSide, G, 2),
+        // new Infantry(whiteSide, H, 2),
+        // new Artillery(whiteSide, A, 1),
+        // new Paratrooper(whiteSide, B, 1),
+        // new Sniper(whiteSide, C, 1),
+        // new Tank(whiteSide, D, 1),
+        // new General(whiteSide, E, 1), // E1
+        // new Sniper(whiteSide, F, 1),
+        // new Paratrooper(whiteSide, G, 1),
+        // new Artillery(whiteSide, H, 1)
     ]);
 
     var blackSide = new Side("Black", "#26201c");
     blackSide.definePieces([
-        // new Infantry(blackSide, C, 6),
-        // new Infantry(blackSide, D, 6),
-        // new Infantry(blackSide, E, 6),
-        // new Infantry(blackSide, F, 6),
+        new General(blackSide, D, 5),
+        new Infantry(blackSide, D, 6),
+        // new Infantry(blackSide, A, 7),
+        // new Infantry(blackSide, B, 7),
         // new Infantry(blackSide, C, 7),
         // new Infantry(blackSide, D, 7),
         // new Infantry(blackSide, E, 7),
         // new Infantry(blackSide, F, 7),
-        new Infantry(blackSide, A, 7),
-        new Infantry(blackSide, B, 7),
-        new Infantry(blackSide, C, 7),
-        new Infantry(blackSide, D, 7),
-        new Infantry(blackSide, E, 7),
-        new Infantry(blackSide, F, 7),
-        new Infantry(blackSide, G, 7),
-        new Infantry(blackSide, H, 7),
-        new Artillery(blackSide, A, 8),
-        new Paratrooper(blackSide, B, 8),
-        new Sniper(blackSide, C, 8),
-        new Tank(blackSide, D, 8), // D8
-        new General(blackSide, E, 8),
-        new Sniper(blackSide, F, 8),
-        new Paratrooper(blackSide, G, 8),
-        new Artillery(blackSide, H, 8)
+        // new Infantry(blackSide, G, 7),
+        // new Infantry(blackSide, H, 7),
+        // new Artillery(blackSide, A, 8),
+        // new Paratrooper(blackSide, B, 8),
+        // new Sniper(blackSide, C, 8),
+        // new Tank(blackSide, D, 8), // D8
+        // new General(blackSide, E, 8),
+        // new Sniper(blackSide, F, 8),
+        // new Paratrooper(blackSide, G, 8),
+        // new Artillery(blackSide, H, 8)
     ]);
     player.view = board.sides[0].name;
 }
@@ -546,6 +555,33 @@ function drawPromotion() {
     buttons.promote.artillery.draw(width / 2 - iconW * 1.5, height / 2 - iconH / 2, iconW, iconH);
     buttons.promote.sniper.draw(width / 2 + iconW * 0.5, height / 2 - iconH / 2, iconW, iconH);
     buttons.promote.paratrooper.draw(width / 2 + iconW * 2.5, height / 2 - iconH / 2, iconW, iconH);
+
+    pop();
+}
+
+function drawGeneralKIA() {
+    push();
+    translate(-marginX, -marginY);
+    if (player.view == board.sides[1].name) {
+        push();
+        translate(width, height);
+        rotate(PI);
+    }
+
+    fill(0, 0, 0, 175)
+    noStroke();
+    rect(0, 0, width, height);
+
+    fill(colors.white);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("GENERAL HAS BEEN KIA", width / 2 - boardSize / 2, marginY * 2, boardSize);
+    textSize(20);
+    text(`You can either retreat (END GAME), or keep fighting with all units taking a morale hit (1HP)`, width / 2 - boardSize / 2, marginY * 3, boardSize);
+
+
+    buttons.retreat.draw(width / 2 - (125 + 20), height - 75, 125, 35, true);
+    buttons.keepFighting.draw(width / 2 + 20, height - 75, 175, 35, true);
 
     pop();
 }

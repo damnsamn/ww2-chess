@@ -2,9 +2,10 @@
 // Input Events
 function mousePressed() {
     let screenEndGame = player.side && (checkMate || board.loss);
+    let screenGeneralKIA = getPlayerSideOfBoard() ? getPlayerSideOfBoard().generalKIA : false;
     let screenPromotion = player.side && promotion;
     let screenSideSelect = !player.side;
-    let screenGamePlay = player.side && !promotion && !checkMate;
+    let screenGamePlay = player.side && !promotion && !checkMate && !screenGeneralKIA;
     let screenGameSelect = !loadedGame && !startingNewGame;
     let screenNewGame = !loadedGame && startingNewGame;
 
@@ -89,6 +90,12 @@ function mousePressed() {
         buttons.promote.sniper.catchClick(() => { promote(promotion, SNIPER) })
         buttons.promote.paratrooper.catchClick(() => { promote(promotion, PARATROOPER) })
 
+    }
+
+    // General has been KIA
+    if (screenGeneralKIA) {
+        buttons.retreat.catchClick(endGame);
+        buttons.keepFighting.catchClick(Side.generalDeath(getPlayerSideOfBoard()));
     }
 
     // Checkmate or loss of pieces

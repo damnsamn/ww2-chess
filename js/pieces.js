@@ -146,11 +146,13 @@ class General extends Piece {
     }
 
     getMoves() {
-        // this.moves = {};
+        this.initMovesObj();
 
-        // for (let x = -1; x <= 1; x++)
-        //     for (let y = -1; y <= 1; y++)
-        //         this.moveLoop(x, y, 1);
+        for (let x = -1; x <= 1; x++)
+            for (let y = -1; y <= 1; y++) {
+                this.moveLoop(MOVEMENT, x, y, false, 0, 1);
+                this.moveLoop(RANGED, x, y, false, 1, 2);
+            }
 
         // this.checkLoop();
     }

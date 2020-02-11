@@ -24,4 +24,13 @@ class Side {
             color: side.color
         }
     }
+
+    static generalDeath(side) {
+        pieceLoop(piece => {
+            if (piece.side.name == side.name) {
+                piece.hp = 1;
+                side.generalKIA = null;
+            }
+        })
+    }
 }
