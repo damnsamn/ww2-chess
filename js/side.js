@@ -29,8 +29,12 @@ class Side {
         pieceLoop(piece => {
             if (piece.side.name == side.name) {
                 piece.hp = 1;
-                side.generalKIA = null;
             }
-        })
+        });
+
+        side.generalKIA = null;
+        console.log("sending data:");
+        console.log(board);
+        boardData.set(board);
     }
 }

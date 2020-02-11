@@ -95,7 +95,7 @@ function mousePressed() {
     // General has been KIA
     if (screenGeneralKIA) {
         buttons.retreat.catchClick(endGame);
-        buttons.keepFighting.catchClick(Side.generalDeath(getPlayerSideOfBoard()));
+        buttons.keepFighting.catchClick(() => Side.generalDeath(getPlayerSideOfBoard()));
     }
 
     // Checkmate or loss of pieces

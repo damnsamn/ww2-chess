@@ -232,6 +232,7 @@ class Piece {
                 if (move.cooldown) {
                     this.startCooldown();
                 }
+
                 this.endMove();
 
                 break;
@@ -245,6 +246,12 @@ class Piece {
         if (this.hp < 1) {
             Piece.grave(this);
             board.state[this.position.index.x][this.position.index.y] = Null;
+
+            // General KIA
+            if (this.type == GENERAL) {
+                let generalSide = this.side.name == board.sides[0].name ? board.sides[0] : board.sides[1];
+                generalSide.generalKIA = true;
+            }
         }
 
     }
@@ -407,12 +414,6 @@ class Piece {
 
         if (destination.piece != Null)
             Piece.grave(destination.piece);
-
-        // General KIA
-        if (destination.piece.type == GENERAL) {
-            let generalSide = destination.piece.side.name == board.sides[0].name ? board.sides[0] : board.sides[1];
-            generalSide.generalKIA = true;
-        }
 
 
         if (!promotion) {

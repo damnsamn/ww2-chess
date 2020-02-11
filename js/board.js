@@ -244,11 +244,11 @@ class Board {
         if (!board.active)
             player.side = null;
 
-        // set check
-        for (let general of getPiecesOfType(GENERAL)) {
-            if (general.hp == 1)
-                general.checkLoop();
-        }
+        // // set check
+        // for (let general of getPiecesOfType(GENERAL)) {
+        //     if (general.hp == 1)
+        //         general.checkLoop();
+        // }
 
         if (board.check)
             checkBreakers = [];
@@ -259,11 +259,11 @@ class Board {
             if (board.turn.name == piece.side.name) {
                 piece.getMoves();
 
-                if (board.check == piece.getGeneral())
-                    piece.getCheckBreakingMoves();
+                // if (board.check == piece.getGeneral())
+                //     piece.getCheckBreakingMoves();
 
-                if (!board.check)
-                    piece.blockCheckMoves()
+                // if (!board.check)
+                //     piece.blockCheckMoves()
             }
 
             if (!isWhiteAlive && piece.side.name == board.sides[0].name)
