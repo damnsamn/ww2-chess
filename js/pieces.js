@@ -60,7 +60,7 @@ class Artillery extends Piece {
                 this.moveLoop(MOVEMENT, x, y, false, 0, 1);
 
                 // Ranged
-                this.moveLoop(RANGED, x, y, true, 2, 0);
+                this.moveLoop(SPLASH, x, y, true, 2, 0);
             }
 
     }

@@ -34,6 +34,7 @@ const GENERAL = "GENERAL";
 // Move types
 const MOVEMENT = "movement";
 const RANGED = "ranged";
+const SPLASH = "splash";
 const MELEE = "melee";
 
 // Glyphs object

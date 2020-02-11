@@ -129,8 +129,8 @@ function mouseGrid() {
         player.gridMouse.y = 8 - ceil((boardSize - (mouseY - marginY)) / squareSize) + 1;
     }
 
+    player.hoverHighlight = [];
     if (player.selectedPiece && player.selectedPiece.type == ARTILLERY) {
-        player.hoverHighlight = [];
         for (let move of player.selectedPiece.moves.ranged) {
             if (move.x == player.gridMouse.x - 1 && move.y == player.gridMouse.y - 1) {
                 for (let x = -1; x <= 1; x++) {

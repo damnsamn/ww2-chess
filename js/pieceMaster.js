@@ -218,7 +218,7 @@ class Piece {
                     board.lastMove = [{ x: this.position.index.x, y: this.position.index.y, color: colors.blue }];
 
                     for (let x = -1; x <= 1; x++) {
-                        if (board.state[move.x + x][move.y])
+                        if (board.state[move.x + x] && board.state[move.x + x][move.y])
                             board.state[move.x + x][move.y].damage(1);
                         board.lastMove.push({ x: move.x + x, y: move.y, color: colors.red });
 
@@ -474,8 +474,8 @@ class Piece {
             incrementY,
             (x, y) => {
                 if (s >= start) {
-                    if ((type != MOVEMENT && board.state[x][y]) || (type == MOVEMENT && !board.state[x][y]))
-                        this.addMove(type, x, y, cooldown);
+                    if ((type != MOVEMENT && board.state[x][y]) || (type == MOVEMENT && !board.state[x][y]) || type == SPLASH)
+                        this.addMove(type == SPLASH ? RANGED : type, x, y, cooldown);
                 } else s++;
             }, n);
     }
